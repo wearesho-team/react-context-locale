@@ -17,9 +17,8 @@ You must provide locale setting and controls with `LocaleProvider`.
 
 ```tsx
 <LocaleProvider 
-    availableLocales={["ru", "en", "ua"]} 
     translations={Translations}
-    initialLocale="ru"
+    defaultLocale="ru"
     baseLocale="ru"
     throwError
 >
@@ -28,8 +27,7 @@ You must provide locale setting and controls with `LocaleProvider`.
 ```
 
 where
- - `availableLocales` - list of avaliable locales in your app
- - `initialLocale` - locale, that will be used on did mount
+ - `defaultLocale` - locale, that will be used on did mount
  - `baseLocale` - locale, that used as key for translation
  - `translations` - object, that contains translations
  - `throwError` - will throw error, if translation key does not found in storage. Optional. If not passed, string with error description will be returned.
@@ -50,6 +48,7 @@ Translations object example:
     }
 }
 ```
+*Note: In this example available locales is `gb`, `en` and base locale `ru`.
 
 ##### Translator
 
@@ -78,7 +77,7 @@ Or you can also use `t` function as HOC:
 
 For controlling switching locale, use `SingleLanguageSwitcher` or `MultipleLanguageSwitcher` component.
 
-`SingleLanguageSwitcher` will render single button, that will change locale in the same sequence, than locales declared in `availableLocales` prop:
+`SingleLanguageSwitcher` will render single button, that will change locale in the same sequence, than locales declared in transaltions object:
 
 ```tsx
 <SingleLanguageSwitcher localeLabels={{ru: "RUS", en: "ENG", gb: "GER"}} {...HTMLButtonProps}/>
@@ -87,7 +86,7 @@ For controlling switching locale, use `SingleLanguageSwitcher` or `MultipleLangu
 where
  - `localeLabels` - label, that will be displayed in button, according to current locale. Optional. If not passed, original locale name will be displayed
 
-`MultipleLanguageSwitcher` will render count of buttons according to `availableLocales` length:
+`MultipleLanguageSwitcher` will render count of buttons according to available locales length:
 
 ```tsx
 <SingleLanguageSwitcher localeLabels={{ru: "RUS", en: "ENG", gb: "GER"}} activeClassName="is-active" {...HTMLButtonProps} />

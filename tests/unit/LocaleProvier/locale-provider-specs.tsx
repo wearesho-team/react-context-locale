@@ -12,9 +12,8 @@ describe("<LocaleProvider/>", () => {
     beforeEach(() => {
         wrapper = mount(
             <LocaleProvider
-                availableLocales={["ru", "en", "gb"]}
                 translations={Translations}
-                initialLocale="ru"
+                defaultLocale="ru"
                 baseLocale="ru"
             >
                 <span>
@@ -46,9 +45,8 @@ describe("<LocaleProvider/>", () => {
 
         wrapper = mount(
             <LocaleProvider
-                availableLocales={["ru", "en", "gb"]}
                 translations={Translations}
-                initialLocale="ru"
+                defaultLocale="ru"
                 baseLocale="ru"
                 throwError
             >
@@ -67,9 +65,8 @@ describe("<LocaleProvider/>", () => {
 
         wrapper = mount(
             <LocaleProvider
-                availableLocales={["ru", "en", "gb"]}
                 translations={Translations}
-                initialLocale="en"
+                defaultLocale="en"
                 baseLocale="ru"
             >
                 <span>
