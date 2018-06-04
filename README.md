@@ -48,7 +48,7 @@ Translations object example:
     }
 }
 ```
-*Note: In this example available locales is `gb`, `en` and base locale `ru`.
+*Note: In this example available locales is `gb`, `en` and base locale `ru`.*
 
 ##### Translator
 
@@ -94,3 +94,16 @@ where
 
 where
  - `activeClassName` -  class name that will be appending to button with according active locale. Optional. Default - `active`
+
+##### OnLocale
+
+If you need to display some markup only for specified locale, use `OnLocale` component:
+
+```tsx
+<OnLocale locale="en">
+    <span>You see this, because you selected `en` locale</span>
+<OnLocale>
+```
+
+where
+- `locale` - locale on which showing markup
