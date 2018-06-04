@@ -1,5 +1,97 @@
 [![codecov](https://codecov.io/gh/wearesho-team/react-context-locale/branch/master/graph/badge.svg)](https://codecov.io/gh/wearesho-team/react-context-locale)
 [![Build Status](https://travis-ci.org/wearesho-team/react-context-locale.svg?branch=master)](https://travis-ci.org/wearesho-team/react-context-locale)
 
-
 # React context locale
+
+Tool for localize application.
+
+```tsx
+<span>{t("errors", "Wrong phone format")}</span>
+```
+
+## Usage
+
+##### LocaleProvider
+
+You must provide locale setting and controls with `LocaleProvider`.
+
+```tsx
+<LocaleProvider 
+    availableLocales={["ru", "en", "ua"]} 
+    translations={Translations}
+    initialLocale="ru"
+    baseLocale="ru"
+    throwError
+>
+    // ...
+</LocaleProvider>
+```
+
+where
+ - `availableLocales` - list of avaliable locales in your app
+ - `initialLocale` - locale, that will be used on did mount
+ - `baseLocale` - locale, that used as key for translation
+ - `translations` - object, that contains translations
+ - `throwError` - will throw error, if translation key does not found in storage. Optional. If not passed, string with error description will be returned.
+
+Translations object example:
+
+```json
+{
+    "gb": {
+        "mainPage": {
+            "Тестовый перевод": "Übersetzung testen"
+        }
+    },
+    "en": {
+        "mainPage": {
+            "Тестовый перевод": "Test translation"
+        }
+    }
+}
+```
+
+##### Translator
+
+To translate string you must wrap it to the `Translator` component:
+
+```tsx
+<span>
+    <Translator category="mainPage">
+        Тестовый перевод
+    </Translator>
+</span>
+```
+
+where
+- `category` - sub-object that contains translation strings
+
+Or you can also use `t` function as HOC:
+
+```tsx
+<span>
+    {t("mainPage", "Тестовый перевод")}
+</span>
+```
+
+##### LanguageSwitcher
+
+For controlling switching locale, use `SingleLanguageSwitcher` or `MultipleLanguageSwitcher` component.
+
+`SingleLanguageSwitcher` will render single button, that will change locale in the same sequence, than locales declared in `availableLocales` prop:
+
+```tsx
+<SingleLanguageSwitcher localeLabels={{ru: "RUS", en: "ENG", gb: "GER"}} {...HTMLButtonProps}/>
+```
+
+where
+ - `localeLabels` - label, that will be displayed in button, according to current locale. Optional. If not passed, original locale name will be displayed
+
+`MultipleLanguageSwitcher` will render count of buttons according to `availableLocales` length:
+
+```tsx
+<SingleLanguageSwitcher localeLabels={{ru: "RUS", en: "ENG", gb: "GER"}} activeClassName="is-active" {...HTMLButtonProps} />
+```
+
+where
+ - `activeClassName` -  class name that will be appending to button with according active locale. Optional. Default - `active`
