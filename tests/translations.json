@@ -1,0 +1,12 @@
+{
+    "gb": {
+        "mainPage": {
+            "Тестовый перевод": "Übersetzung testen"
+        }
+    },
+    "en": {
+        "mainPage": {
+            "Тестовый перевод": "Test translation"
+        }
+    }
+}
