@@ -8,16 +8,14 @@ export interface TranslationsObject {
 };
 
 export interface LocaleProviderProps {
-    availableLocales: Array<string>;
     translations: TranslationsObject;
-    initialLocale: string;
+    defaultLocale: string;
     throwError?: boolean;
     baseLocale: string;
 }
 
 export const LocaleProviderPropTypes: {[P in keyof LocaleProviderProps]: PropTypes.Validator<any>} = {
-    availableLocales: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-    initialLocale: PropTypes.string.isRequired,
+    defaultLocale: PropTypes.string.isRequired,
     translations: PropTypes.object.isRequired,
     baseLocale: PropTypes.string.isRequired,
     throwError: PropTypes.bool
@@ -32,12 +30,12 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
     public static readonly propTypes = LocaleProviderPropTypes;
 
     public readonly state: LocaleProviderState = {
-        currentLocale: this.props.initialLocale
+        currentLocale: this.props.defaultLocale
     };
 
     public getChildContext(): LocaleProviderContext {
         return {
-            availableLocales: this.props.availableLocales,
+            availableLocales: this.avaliableLocales,
             currentLocale: this.state.currentLocale,
             translate: this.translate,
             setLocale: this.setLocale
@@ -46,6 +44,10 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
 
     public render(): React.ReactNode {
         return this.props.children;
+    }
+
+    protected get avaliableLocales(): Array<string> {
+        return [...Object.keys(this.props.translations), this.props.baseLocale];
     }
 
     protected setLocale = (nextLocale: string): void => {
