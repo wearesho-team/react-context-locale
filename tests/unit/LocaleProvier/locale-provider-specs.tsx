@@ -2,7 +2,7 @@ import { expect } from "chai";
 import * as React from "react";
 import { ReactWrapper, mount } from "enzyme";
 
-import { LocaleProvider, t } from "../../../src";
+import { LocaleProvider, t, Translator } from "../../../src";
 
 const Translations = require("../../translations.json");
 
@@ -41,23 +41,23 @@ describe("<LocaleProvider/>", () => {
     });
 
     it("Should throw error when translation missing if 'throwError' prop passed", () => {
-        // wrapper.unmount();
+        wrapper.unmount();
 
-        // wrapper = mount(
-        //     <LocaleProvider
-        //         translations={Translations}
-        //         defaultLocale="ru"
-        //         baseLocale="ru"
-        //         throwError
-        //     >
-        //         <span>
-        //             {t("contactPage", "Тестовый перевод")}
-        //         </span>
-        //     </LocaleProvider>
-        // );
+        wrapper = mount(
+            <LocaleProvider
+                translations={Translations}
+                defaultLocale="ru"
+                baseLocale="ru"
+                throwError
+            >
+                <span>
+                    {t("contactPage", "Тестовый перевод")}
+                </span>
+            </LocaleProvider>
+        );
 
-        // expect(() => (wrapper.instance() as any).getChildContext().setLocale("en"))
-        //     .to.throw("Cannot read property 'Тестовый перевод' of undefined");
+        expect(() => (wrapper.instance() as any).getChildContext().setLocale("en"))
+            .to.throw("Cannot read property 'Тестовый перевод' of undefined");
     });
 
     it("Should not throw error when translation missing if 'throwError' prop not passed", () => {
@@ -78,4 +78,27 @@ describe("<LocaleProvider/>", () => {
         expect(wrapper.getDOMNode().innerHTML)
             .to.equals("Missing translation Тестовый перевод in category contactPage for language en");
     });
-})
+
+    it("Should convert plural values to correct strings", () => {
+        wrapper.unmount();
+
+        wrapper = mount(
+            <LocaleProvider
+                translations={Translations}
+                defaultLocale="ru"
+                baseLocale="ru"
+            >
+                <span>
+                    <Translator category="pluralPage" params={{ n: 1, where: "На диване" }}>
+                        {`{where} _PLURAL(n!, 0:нет кошек, 1:один кот, other: # котов)`}
+                    </Translator>
+                </span>
+            </LocaleProvider>
+        );
+
+        expect(wrapper.getDOMNode().innerHTML).to.equals("На диване один кот");
+
+        (wrapper.instance() as any).getChildContext().setLocale("gb");
+        expect(wrapper.getDOMNode().innerHTML).to.equals("На диване ist eine Katze!");
+    });
+});

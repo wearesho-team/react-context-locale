@@ -2,6 +2,7 @@ import * as React from "react";
 import * as PropTypes from "prop-types";
 
 import { LocaleProviderContextTypes, LocaleProviderContext } from "./LocaleProviderContext";
+import { RegParser, Params } from "../RegParser";
 
 export interface TranslationsObject {
     [key: string]: string | TranslationsObject
@@ -33,6 +34,8 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
         currentLocale: this.props.defaultLocale
     };
 
+    private RegParser = new RegParser();
+
     public getChildContext(): LocaleProviderContext {
         return {
             availableLocales: this.avaliableLocales,
@@ -54,9 +57,11 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
         this.setState({ currentLocale: nextLocale });
     }
 
-    protected translate = (category: string, value: string): string | never => {
+    protected translate = (category: string, value: string, params?: Params): string | never => {
         if (this.state.currentLocale === this.props.baseLocale) {
-            return value;
+            return params
+                ? this.RegParser.substitute(value, params)
+                : value;
         }
 
         let translation;
@@ -71,6 +76,8 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
                 = `Missing translation ${value} in category ${category} for language ${this.state.currentLocale}`;
         }
 
-        return translation;
+        return params
+            ? this.RegParser.substitute(translation, params)
+            : translation;
     }
 }

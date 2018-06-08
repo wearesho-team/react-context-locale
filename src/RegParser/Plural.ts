@@ -29,6 +29,10 @@ export class Plural {
     }
 
     public convert = (): string => {
+        if (this.values[this.pluralValue] === undefined) {
+            return "";
+        }
+
         return this.values[this.pluralValue].replace(/#/g, this.actualNumber.toString());
     }
 
@@ -47,16 +51,23 @@ export class Plural {
             return "one";
         }
 
-        if ((this.actualNumber > 20 || this.actualNumber < 10) && (Number(lastChar) >= 2 && Number(lastChar) <= 4) && this.values.few) {
+        if (
+            (this.actualNumber > 20 || this.actualNumber < 10)
+            && (Number(lastChar) >= 2 && Number(lastChar) <= 4)
+            && this.values.few
+        ) {
             return "few";
         }
 
         const lastCharForManyType = (this.actualNumber - 5).toString().slice(-1);
-        if ((this.actualNumber >= 5 && this.actualNumber <= 20) || (Number(lastCharForManyType) >= 0 && Number(lastCharForManyType) <= 5) && this.values.many) {
+        if (
+            (this.actualNumber >= 5 && this.actualNumber <= 20)
+            || (Number(lastCharForManyType) >= 0 && Number(lastCharForManyType) <= 5)
+            && this.values.many
+        ) {
             return "many";
         }
 
         return "other";
     }
-
 }

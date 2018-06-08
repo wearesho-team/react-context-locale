@@ -2,11 +2,17 @@
     "gb": {
         "mainPage": {
             "Тестовый перевод": "Übersetzung testen"
+        },
+        "pluralPage": {
+            "{where} _PLURAL(n!, 0:нет кошек, 1:один кот, other: # котов)": "{where} _PLURAL(n!, 0:sind keine Katzen, 1:ist eine Katze, other: sind # Katzen)!"
         }
     },
     "en": {
         "mainPage": {
             "Тестовый перевод": "Test translation"
+        },
+        "pluralPage": {
+            "{where} _PLURAL(n!, 0:нет кошек, 1:один кот, other: # котов)": "{where} _PLURAL(n!, 0:are no cats, 1:is one cat, other: are # cats)!"
         }
     }
 }

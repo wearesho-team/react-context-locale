@@ -30,10 +30,11 @@ export class RegParser {
         let replaced = value;
 
         pluralStrings.forEach((pluralString) => {
-            const pluralComponents = pluralString.replace(/_PLURAL\(/g, "").trim();
+            const pluralComponents = pluralString.replace(/_PLURAL\(|\)/g, "").trim();
             const variableName = pluralComponents.match(/^.*?!/g)[0].slice(0, -1);
+
             if (isNaN(Number(params[variableName]))) {
-                throw new Error(`Plural params object contains not number value ${params[variableName]}`);
+                throw new Error(`Plural params object contains not number value '${params[variableName]}'`);
             }
 
             const plural = new Plural(pluralComponents.slice(variableName.length + 1), Number(params[variableName]));
@@ -46,7 +47,6 @@ export class RegParser {
 
     private matchReplacer = (args: { groupName: string, shield: boolean }): RegExp => {
         const prefix = !args.shield ? "^" : "";
-
         return new RegExp(`{[${prefix}/]?${args.groupName}?[${prefix}/]}`, "g");
     }
 }

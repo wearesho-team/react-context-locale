@@ -1,7 +1,9 @@
 import * as PropTypes from "prop-types";
 
+import { Params } from "../RegParser";
+
 export interface LocaleProviderContext {
-    translate: (category: string, value: string) => string;
+    translate: (category: string, value: string, parms?: Params) => string;
     setLocale: (nextLocale: string) => void;
     availableLocales: Array<string>;
     currentLocale: string;
