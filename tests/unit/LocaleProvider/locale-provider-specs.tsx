@@ -124,6 +124,6 @@ describe("<LocaleProvider/>", () => {
             </LocaleProvider>
         );
 
-        expect(wrapper.getDOMNode().innerHTML).to.equals("Missing translation en:empty:text");        
+        expect(wrapper.getDOMNode().innerHTML).to.equals("Missing translation en:empty:text");
     });
 });

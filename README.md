@@ -20,7 +20,7 @@ You must provide locale setting and controls with `LocaleProvider`.
     translations={Translations}
     defaultLocale="ru"
     baseLocale="ru"
-    throwError
+    onMissingTranslation={({currentLocale, category, value}) => `Missing translation ${currentLocale}:${category}:${value}`}
 >
     // ...
 </LocaleProvider>
