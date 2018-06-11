@@ -2,28 +2,43 @@ import { expect } from "chai";
 import * as React from "react";
 import { ReactWrapper, mount } from "enzyme";
 
-import { LocaleProvider, t, Translator } from "../../../src";
+import { LocaleProvider, t, Translator, RegisterCategory } from "../../../src";
 
 const Translations = require("../../translations.json");
 
 describe("<LocaleProvider/>", () => {
-    let wrapper: ReactWrapper<{}, {}>;
+    let wrapper: ReactWrapper<{}, any>;
+
+    const commonTranslations = { en: { errors: { format: "wrong format" } } };
 
     beforeEach(() => {
         wrapper = mount(
             <LocaleProvider
-                translations={Translations}
+                commonTranslations={commonTranslations}
                 defaultLocale="ru"
                 baseLocale="ru"
             >
-                <span>
-                    {t("mainPage", "Тестовый перевод")}
-                </span>
+                <RegisterCategory translations={Translations}>
+                    <span>
+                        {t("mainPage", "Тестовый перевод")}
+                    </span>
+                </RegisterCategory>
             </LocaleProvider>
         );
     });
 
     afterEach(() => wrapper.unmount());
+
+    it("Should register translations", () => {
+        expect(JSON.stringify(wrapper.instance().state.translations.get("en")))
+            .to.equals(JSON.stringify({ ...commonTranslations.en, ...Translations.en }));
+
+        const newCategory = { en: { testTranslation: "test translation" } };
+
+        (wrapper.instance() as any).getChildContext().registerCategory(newCategory);
+        expect(JSON.stringify(wrapper.instance().state.translations.get("en")))
+            .to.equals(JSON.stringify({ ...commonTranslations.en, ...Translations.en, ...newCategory.en }));
+    });
 
     it("Should not translate text, when baseLocale equals initialLocale", () => {
         expect(wrapper.getDOMNode().innerHTML).to.equals("Тестовый перевод");
@@ -52,13 +67,14 @@ describe("<LocaleProvider/>", () => {
         wrapper = mount(
             <LocaleProvider
                 onMissingTranslation={handleMissingTranslation}
-                translations={Translations}
                 defaultLocale="ru"
                 baseLocale="ru"
             >
-                <span>
-                    {t("contactPage", "Тестовый перевод")}
-                </span>
+                <RegisterCategory translations={Translations}>
+                    <span>
+                        {t("contactPage", "Тестовый перевод")}
+                    </span>
+                </RegisterCategory>
             </LocaleProvider>
         );
 
@@ -71,13 +87,14 @@ describe("<LocaleProvider/>", () => {
 
         wrapper = mount(
             <LocaleProvider
-                translations={Translations}
                 defaultLocale="en"
                 baseLocale="ru"
             >
-                <span>
-                    {t("contactPage", "Тестовый перевод")}
-                </span>
+                <RegisterCategory translations={Translations}>
+                    <span>
+                        {t("contactPage", "Тестовый перевод")}
+                    </span>
+                </RegisterCategory>
             </LocaleProvider>
         );
 
@@ -89,15 +106,16 @@ describe("<LocaleProvider/>", () => {
 
         wrapper = mount(
             <LocaleProvider
-                translations={Translations}
                 defaultLocale="ru"
                 baseLocale="ru"
             >
-                <span>
-                    <Translator category="pluralPage" params={{ n: 1, where: "На диване" }}>
-                        [where] _PLR(n!, 0:нет кошек, 1:один кот, other: # котов)!
+                <RegisterCategory translations={Translations}>
+                    <span>
+                        <Translator category="pluralPage" params={{ n: 1, where: "На диване" }}>
+                            [where] _PLR(n!, 0:нет кошек, 1:один кот, other: # котов)!
                     </Translator>
-                </span>
+                    </span>
+                </RegisterCategory>
             </LocaleProvider>
         );
 
@@ -112,15 +130,16 @@ describe("<LocaleProvider/>", () => {
 
         wrapper = mount(
             <LocaleProvider
-                translations={Translations}
                 defaultLocale="en"
                 baseLocale="ru"
             >
-                <span>
-                    <Translator category="empty">
-                        text
+                <RegisterCategory translations={Translations}>
+                    <span>
+                        <Translator category="empty">
+                            text
                     </Translator>
-                </span>
+                    </span>
+                </RegisterCategory>
             </LocaleProvider>
         );
 
