@@ -27,10 +27,10 @@ export class LangLink extends React.Component<NavLinkProps> {
     }
 
     protected get to(): string {
-        const urlPrefix = this.context.currentLocale === this.context.baseLocale
-            ? `${this.context.currentLocale}`
+        const urlPrefix = this.context.currentLocale !== this.context.baseLocale
+            ? `/${this.context.currentLocale}`
             : "";
 
-        return `/${urlPrefix}${this.props.to}`
+        return `${urlPrefix}${this.props.to}`
     }
 }

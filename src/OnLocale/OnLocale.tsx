@@ -18,6 +18,6 @@ export class OnLocale extends React.Component<OnLocaleProps> {
     public readonly context: LocaleProviderContext;
 
     public render(): React.ReactNode {
-        return this.context.currentLocale === this.props.locale && this.props.children;
+        return this.context.currentLocale === this.props.locale ? this.props.children : null;
     }
 }

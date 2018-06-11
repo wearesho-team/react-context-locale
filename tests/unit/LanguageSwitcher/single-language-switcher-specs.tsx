@@ -80,14 +80,14 @@ describe("<SingleLanguageSwitcher/>", () => {
             }
         });
 
-        expect(wrapper.getDOMNode().innerHTML).to.equals("RUS");
-
-        wrapper.simulate("click");
-        wrapper.setContext({ ...context });
         expect(wrapper.getDOMNode().innerHTML).to.equals("ENG");
 
         wrapper.simulate("click");
         wrapper.setContext({ ...context });
         expect(wrapper.getDOMNode().innerHTML).to.equals("GER");
+
+        wrapper.simulate("click");
+        wrapper.setContext({ ...context });
+        expect(wrapper.getDOMNode().innerHTML).to.equals("RUS");
     });
 })
