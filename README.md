@@ -135,6 +135,7 @@ Will render:
 ```
 
 Available rules:
+
 | Rule  | Meaning                                         |
 |-------|-------------------------------------------------|
 | 0     | means zero                                      |
