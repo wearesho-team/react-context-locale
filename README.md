@@ -11,14 +11,14 @@ Tool for localize application.
 
 ## Usage
 
-##### LocaleProvider
+#### LocaleProvider
 
 You must provide locale setting and controls with `LocaleProvider`.
 
 ```tsx
 <LocaleProvider
     onMissingTranslation={({currentLocale, category, value}) => `Missing translation ${currentLocale}:${category}:${value}`}
-    translations={Translations}
+    commonTranslations={Translations}
     defaultLocale="ru"
     baseLocale="ru"
 >
@@ -29,7 +29,7 @@ You must provide locale setting and controls with `LocaleProvider`.
 where
  - `defaultLocale` - locale, that will be used on did mount
  - `baseLocale` - locale, that used as key for translation
- - `translations` - object, that contains translations
+ - `commonTranslations` - object, that contains commmon translations
  - `onMissingTranslation` - will called, if translation key does not found in storage. Optional. If not passed, string with error description will be returned.
 
 Translations object example:
@@ -37,20 +37,36 @@ Translations object example:
 ```json
 {
     "gb": {
-        "mainPage": {
-            "Тестовый перевод": "Übersetzung testen"
+        "errors": {
+            "Неверный формат": "Falsches Format"
         }
     },
     "en": {
-        "mainPage": {
-            "Тестовый перевод": "Test translation"
+        "errors": {
+            "Неверный формат": "Wrong format"
         }
     }
 }
 ```
 *Note: In this example available locales is `gb`, `en` and base locale `ru`.*
+*Note: Categories name are not translatable*
 
-##### Translator
+#### RegisterCategory 
+
+To register new translation, use `RegisterCategory` component:
+
+```tsx
+<RegisterCategory translations={Translations}>
+    // ...
+</RegisterCategory>
+```
+
+where
+- `translations` - object, that contains new category translations
+
+*Note: Categories must be unique. If it doesn't, last registered category will be used and other will be deleted*
+
+#### Translator
 
 To translate string you must wrap it to the `Translator` component:
 
@@ -73,7 +89,7 @@ Or you can also use `t` function as HOC:
 </span>
 ```
 
-##### LanguageSwitcher
+#### LanguageSwitcher
 
 For controlling switching locale, use `SingleLanguageSwitcher` or `MultipleLanguageSwitcher` component.
 
@@ -95,7 +111,7 @@ where
 where
  - `activeClassName` -  class name that will be appending to button with according active locale. Optional. Default - `active`
 
-##### OnLocale
+#### OnLocale
 
 If you need to display some markup only for specified locale, use `OnLocale` component:
 
@@ -108,7 +124,7 @@ If you need to display some markup only for specified locale, use `OnLocale` com
 where
 - `locale` - locale on which showing markup
 
-##### Plural
+#### Plural
 
 It is only necessary to indicate the forms of the declined word in different situations:
 
