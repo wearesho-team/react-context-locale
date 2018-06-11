@@ -22,7 +22,7 @@ export class SingleLanguageSwitcher extends React.Component<SingleLanguageSwitch
 
         return (
             <button type="button" onClick={this.handleClick} {...buttonProps}>
-                {localeLabels ? localeLabels[this.context.currentLocale] : this.context.currentLocale}
+                {localeLabels ? localeLabels[this.nextLocale] : this.nextLocale}
             </button>
         );
     }
@@ -30,13 +30,17 @@ export class SingleLanguageSwitcher extends React.Component<SingleLanguageSwitch
     protected handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
         this.props.onClick && this.props.onClick(event);
 
+        this.context.setLocale(this.nextLocale);
+    }
+
+    protected get nextLocale(): string {
         const currentLocaleIndex = this.context.availableLocales
             .findIndex((locale) => locale === this.context.currentLocale);
 
         if (currentLocaleIndex === this.context.availableLocales.length - 1) {
-            this.context.setLocale(this.context.availableLocales[0])
+            return this.context.availableLocales[0];
         } else {
-            this.context.setLocale(this.context.availableLocales[currentLocaleIndex + 1]);
+            return this.context.availableLocales[currentLocaleIndex + 1];
         }
     }
 }

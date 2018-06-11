@@ -37,7 +37,7 @@ export class MultipleLanguageSwitcher extends React.Component<MultipleLanguageSw
                 className={this.getClassName(locale)}
                 {...buttonProps}
             >
-                {localeLabels ? localeLabels[this.context.currentLocale] : this.context.currentLocale}
+                {localeLabels ? localeLabels[locale] : locale}
             </button>
         ));
     }
