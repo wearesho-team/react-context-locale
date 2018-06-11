@@ -18,6 +18,7 @@ You must provide locale setting and controls with `LocaleProvider`.
 ```tsx
 <LocaleProvider
     onMissingTranslation={({currentLocale, category, value}) => `Missing translation ${currentLocale}:${category}:${value}`}
+    onLocaleChanged={(currentLocale) => console.log(`Locale changed to ${currentLocale}`)}
     commonTranslations={Translations}
     defaultLocale="ru"
     baseLocale="ru"
@@ -30,7 +31,8 @@ where
  - `defaultLocale` - locale, that will be used on did mount
  - `baseLocale` - locale, that used as key for translation
  - `commonTranslations` - object, that contains commmon translations
- - `onMissingTranslation` - will called, if translation key does not found in storage. Optional. If not passed, string with error description will be returned.
+ - `onLocaleChanged` - will called, when locale was changed. Optional 
+ - `onMissingTranslation` - will called, if translation key does not found in storage. Optional. If not passed, string with error description will be returned
 
 Translations object example:
 

@@ -145,4 +145,30 @@ describe("<LocaleProvider/>", () => {
 
         expect(wrapper.getDOMNode().innerHTML).to.equals("Missing translation en:empty:text");
     });
+
+    it("Should call `onLocaleChanged` callback if it passed to props on locale changed", () => {
+        wrapper.unmount();
+
+        let handlerTriggered = false;
+        const handleLocaleChanged = () => {
+            handlerTriggered = true;
+        }
+
+        wrapper = mount(
+            <LocaleProvider
+                onLocaleChanged={handleLocaleChanged}
+                defaultLocale="ru"
+                baseLocale="ru"
+            >
+                <RegisterCategory translations={Translations}>
+                    <span>
+                        {t("mainPage", "Тестовый перевод")}
+                    </span>
+                </RegisterCategory>
+            </LocaleProvider>
+        );
+
+        (wrapper.instance() as any).getChildContext().setLocale("en");
+        expect(handlerTriggered).to.be.true;
+    });
 });

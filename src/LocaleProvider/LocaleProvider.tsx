@@ -10,6 +10,7 @@ export interface TranslationsObject {
 
 export interface LocaleProviderProps {
     onMissingTranslation?: (params: { currentLocale: string; category: string, value: string }) => string;
+    onLocaleChanged?: (currentLocale: string) => void;
     commonTranslations?: TranslationsObject;
     defaultLocale: string;
     baseLocale: string;
@@ -19,7 +20,8 @@ export const LocaleProviderPropTypes: {[P in keyof LocaleProviderProps]: PropTyp
     defaultLocale: PropTypes.string.isRequired,
     baseLocale: PropTypes.string.isRequired,
     commonTranslations: PropTypes.object,
-    onMissingTranslation: PropTypes.func
+    onMissingTranslation: PropTypes.func,
+    onLocaleChanged: PropTypes.func
 };
 
 export interface LocaleProviderState {
@@ -66,7 +68,9 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
     }
 
     protected setLocale = (nextLocale: string): void => {
-        this.setState({ currentLocale: nextLocale });
+        this.setState({ currentLocale: nextLocale }, () => {
+            this.props.onLocaleChanged && this.props.onLocaleChanged(this.state.currentLocale);
+        });
     }
 
     protected translate = (category: string, value: string, params?: Params): string | never => {
