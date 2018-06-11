@@ -186,7 +186,7 @@ Will render:
 
 ##### LangLink
 
-You can also use [react-router-dom](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-dom) to navigate on app with locale in url:
+You can also use [react-router-dom](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-dom) to navigate on app with locale prefix in url:
 
 ```tsx
 <LangLink to="/index" {...NavLinkProps}>
