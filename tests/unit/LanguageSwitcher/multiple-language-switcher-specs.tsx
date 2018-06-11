@@ -71,4 +71,16 @@ describe("<MultipleLanguageSwitcher/>", () => {
 
         expect(onClickTriggered).to.be.true;
     });
+
+    it("Should paste label if if passed to 'localeLabels' prop according to current locale", () => {
+        wrapper.setProps({
+            localeLabels: {
+                ru: "RUS",
+                en: "ENG",
+                gb: "GER"
+            }
+        });
+
+        expect(wrapper.getDOMNode().innerHTML).to.contains("RUS");
+    });
 })
