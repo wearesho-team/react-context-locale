@@ -40,15 +40,21 @@ describe("<LocaleProvider/>", () => {
         expect(wrapper.getDOMNode().innerHTML).to.equals("Тестовый перевод");
     });
 
-    it("Should throw error when translation missing if 'throwError' prop passed", () => {
+    it("Should call `onMissingTranslation` prop when translation missing if it prop passed", () => {
         wrapper.unmount();
+
+        let handlerTriggered = false;
+        const handleMissingTranslation = (args) => {
+            handlerTriggered = true;
+            return "";
+        }
 
         wrapper = mount(
             <LocaleProvider
+                onMissingTranslation={handleMissingTranslation}
                 translations={Translations}
                 defaultLocale="ru"
                 baseLocale="ru"
-                throwError
             >
                 <span>
                     {t("contactPage", "Тестовый перевод")}
@@ -56,11 +62,11 @@ describe("<LocaleProvider/>", () => {
             </LocaleProvider>
         );
 
-        expect(() => (wrapper.instance() as any).getChildContext().setLocale("en"))
-            .to.throw("Cannot read property 'Тестовый перевод' of undefined");
+        (wrapper.instance() as any).getChildContext().setLocale("en");
+        expect(handlerTriggered).to.be.true;
     });
 
-    it("Should not throw error when translation missing if 'throwError' prop not passed", () => {
+    it("Should return error string when translation missing if 'onMissingTranslation' prop not passed", () => {
         wrapper.unmount();
 
         wrapper = mount(
@@ -75,8 +81,7 @@ describe("<LocaleProvider/>", () => {
             </LocaleProvider>
         );
 
-        expect(wrapper.getDOMNode().innerHTML)
-            .to.equals("Missing translation Тестовый перевод in category contactPage for language en");
+        expect(wrapper.getDOMNode().innerHTML).to.equals("Missing translation en:contactPage:Тестовый перевод");
     });
 
     it("Should convert plural values to correct strings", () => {
@@ -90,15 +95,35 @@ describe("<LocaleProvider/>", () => {
             >
                 <span>
                     <Translator category="pluralPage" params={{ n: 1, where: "На диване" }}>
-                        {`{where} _PLURAL(n!, 0:нет кошек, 1:один кот, other: # котов)`}
+                        [where] _PLR(n!, 0:нет кошек, 1:один кот, other: # котов)!
                     </Translator>
                 </span>
             </LocaleProvider>
         );
 
-        expect(wrapper.getDOMNode().innerHTML).to.equals("На диване один кот");
+        expect(wrapper.getDOMNode().innerHTML).to.equals("На диване один кот!");
 
         (wrapper.instance() as any).getChildContext().setLocale("gb");
         expect(wrapper.getDOMNode().innerHTML).to.equals("На диване ist eine Katze!");
+    });
+
+    it("Should return error string if translation field is empty string", () => {
+        wrapper.unmount();
+
+        wrapper = mount(
+            <LocaleProvider
+                translations={Translations}
+                defaultLocale="en"
+                baseLocale="ru"
+            >
+                <span>
+                    <Translator category="empty">
+                        text
+                    </Translator>
+                </span>
+            </LocaleProvider>
+        );
+
+        expect(wrapper.getDOMNode().innerHTML).to.equals("Missing translation en:empty:text");        
     });
 });

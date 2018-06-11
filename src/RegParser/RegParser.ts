@@ -13,7 +13,7 @@ export class RegParser {
                 .replace(this.matchReplacer({ groupName, shield: false }), params[groupName].toString())
                 .replace(this.matchReplacer(
                     { groupName, shield: true }),
-                    `{${groupName}}`
+                    `\[${groupName}\]`
                 );
         });
 
@@ -21,7 +21,7 @@ export class RegParser {
     }
 
     private plural = (value: string, params: Params): string | never => {
-        const pluralStrings = value.match(/_PLURAL\(.*?\)/g);
+        const pluralStrings = value.match(/_PLR\(.*?\)/g);
 
         if (!pluralStrings || !Array.isArray(pluralStrings)) {
             return value;
@@ -30,7 +30,7 @@ export class RegParser {
         let replaced = value;
 
         pluralStrings.forEach((pluralString) => {
-            const pluralComponents = pluralString.replace(/_PLURAL\(|\)/g, "").trim();
+            const pluralComponents = pluralString.replace(/_PLR\(|\)/g, "").trim();
             const variableName = pluralComponents.match(/^.*?!/g)[0].slice(0, -1);
 
             if (isNaN(Number(params[variableName]))) {
@@ -47,6 +47,6 @@ export class RegParser {
 
     private matchReplacer = (args: { groupName: string, shield: boolean }): RegExp => {
         const prefix = !args.shield ? "^" : "";
-        return new RegExp(`{[${prefix}/]?${args.groupName}?[${prefix}/]}`, "g");
+        return new RegExp(`\\[[${prefix}/]?${args.groupName}?[${prefix}/]\\]`, "g");
     }
 }

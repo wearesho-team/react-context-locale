@@ -9,9 +9,9 @@ export interface TranslationsObject {
 };
 
 export interface LocaleProviderProps {
+    onMissingTranslation?: (params: { currentLocale: string; category: string, value: string }) => string;
     translations: TranslationsObject;
     defaultLocale: string;
-    throwError?: boolean;
     baseLocale: string;
 }
 
@@ -19,7 +19,7 @@ export const LocaleProviderPropTypes: {[P in keyof LocaleProviderProps]: PropTyp
     defaultLocale: PropTypes.string.isRequired,
     translations: PropTypes.object.isRequired,
     baseLocale: PropTypes.string.isRequired,
-    throwError: PropTypes.bool
+    onMissingTranslation: PropTypes.func
 };
 
 export interface LocaleProviderState {
@@ -67,13 +67,15 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
         let translation;
         try {
             translation = this.props.translations[this.state.currentLocale][category][value];
+            if (!translation) {
+                throw new Error();
+            }
         } catch (error) {
-            if (this.props.throwError) {
-                throw error;
+            if (this.props.onMissingTranslation) {
+                return this.props.onMissingTranslation({ value, category, currentLocale: this.state.currentLocale });
             }
 
-            translation
-                = `Missing translation ${value} in category ${category} for language ${this.state.currentLocale}`;
+            translation = `Missing translation ${this.state.currentLocale}:${category}:${value}`;
         }
 
         return params
