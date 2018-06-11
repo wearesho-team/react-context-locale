@@ -143,7 +143,7 @@ Available rules:
 | one   | 21, 31, 41 and so on                            |
 | few   | from 2 to 4, from 22 to 24 and so on            |
 | many  | 0, from 5 to 20, from 25 to 30 and so on        |
-| other | for all other numbers (for example, fractional) |
+| other | for all other numbers                           |
 | #     | is replaced by the value of the argument        |
 
 Substring replacement:
