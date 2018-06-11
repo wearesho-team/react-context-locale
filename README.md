@@ -11,16 +11,17 @@ Tool for localize application.
 
 ## Usage
 
-##### LocaleProvider
+#### LocaleProvider
 
 You must provide locale setting and controls with `LocaleProvider`.
 
 ```tsx
-<LocaleProvider 
-    translations={Translations}
+<LocaleProvider
+    onMissingTranslation={({currentLocale, category, value}) => `Missing translation ${currentLocale}:${category}:${value}`}
+    onLocaleChanged={(currentLocale) => console.log(`Locale changed to ${currentLocale}`)}
+    commonTranslations={Translations}
     defaultLocale="ru"
     baseLocale="ru"
-    throwError
 >
     // ...
 </LocaleProvider>
@@ -29,28 +30,45 @@ You must provide locale setting and controls with `LocaleProvider`.
 where
  - `defaultLocale` - locale, that will be used on did mount
  - `baseLocale` - locale, that used as key for translation
- - `translations` - object, that contains translations
- - `throwError` - will throw error, if translation key does not found in storage. Optional. If not passed, string with error description will be returned.
+ - `commonTranslations` - object, that contains commmon translations
+ - `onLocaleChanged` - will called, when locale was changed. Optional 
+ - `onMissingTranslation` - will called, if translation key does not found in storage. Optional. If not passed, string with error description will be returned
 
 Translations object example:
 
 ```json
 {
     "gb": {
-        "mainPage": {
-            "Тестовый перевод": "Übersetzung testen"
+        "errors": {
+            "Неверный формат": "Falsches Format"
         }
     },
     "en": {
-        "mainPage": {
-            "Тестовый перевод": "Test translation"
+        "errors": {
+            "Неверный формат": "Wrong format"
         }
     }
 }
 ```
 *Note: In this example available locales is `gb`, `en` and base locale `ru`.*
+*Note: Categories name are not translatable*
 
-##### Translator
+#### RegisterCategory 
+
+To register new translation, use `RegisterCategory` component:
+
+```tsx
+<RegisterCategory translations={Translations}>
+    // ...
+</RegisterCategory>
+```
+
+where
+- `translations` - object, that contains new category translations
+
+*Note: Categories must be unique. If it doesn't, last registered category will be used and other will be deleted*
+
+#### Translator
 
 To translate string you must wrap it to the `Translator` component:
 
@@ -73,7 +91,7 @@ Or you can also use `t` function as HOC:
 </span>
 ```
 
-##### LanguageSwitcher
+#### LanguageSwitcher
 
 For controlling switching locale, use `SingleLanguageSwitcher` or `MultipleLanguageSwitcher` component.
 
@@ -95,7 +113,7 @@ where
 where
  - `activeClassName` -  class name that will be appending to button with according active locale. Optional. Default - `active`
 
-##### OnLocale
+#### OnLocale
 
 If you need to display some markup only for specified locale, use `OnLocale` component:
 
@@ -107,3 +125,59 @@ If you need to display some markup only for specified locale, use `OnLocale` com
 
 where
 - `locale` - locale on which showing markup
+
+#### Plural
+
+It is only necessary to indicate the forms of the declined word in different situations:
+
+```tsx
+<span>
+    <Translator category="mainPage" params={{n: 10}}>
+        There _PLR(n! 0:are no cats, 1:is one cat, other:are # cats)!
+    </Translator>
+</span>
+```
+
+where
+- `params` - contains string arguments
+- `_PRL(*argument*! ...rules)` - plural string
+
+Will render:
+
+```tsx
+<span>
+    <Translator category="mainPage" params={{n: 10}}>
+        There are 10 cats!
+    </Translator>
+</span>
+```
+
+Available rules:
+
+| Rule  | Meaning                                         |
+|-------|-------------------------------------------------|
+| 0     | means zero                                      |
+| 1     | corresponds to exactly 1                        |
+| one   | 21, 31, 41 and so on                            |
+| few   | from 2 to 4, from 22 to 24 and so on            |
+| many  | 0, from 5 to 20, from 25 to 30 and so on        |
+| other | for all other numbers                           |
+| #     | is replaced by the value of the argument        |
+
+Substring replacement:
+
+```tsx
+<span>
+    <Translator category="mainPage" params={{where: "There", who: "are no cats"}}>
+        [where] [who]
+    </Translator>
+</span>
+```
+
+Will render:
+
+```tsx
+<span>
+    There are no cats
+</span>
+```

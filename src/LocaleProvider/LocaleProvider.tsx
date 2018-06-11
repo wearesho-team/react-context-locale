@@ -2,26 +2,30 @@ import * as React from "react";
 import * as PropTypes from "prop-types";
 
 import { LocaleProviderContextTypes, LocaleProviderContext } from "./LocaleProviderContext";
+import { RegParser, Params } from "../RegParser";
 
 export interface TranslationsObject {
     [key: string]: string | TranslationsObject
 };
 
 export interface LocaleProviderProps {
-    translations: TranslationsObject;
+    onMissingTranslation?: (params: { currentLocale: string; category: string, value: string }) => string;
+    onLocaleChanged?: (currentLocale: string) => void;
+    commonTranslations?: TranslationsObject;
     defaultLocale: string;
-    throwError?: boolean;
     baseLocale: string;
 }
 
 export const LocaleProviderPropTypes: {[P in keyof LocaleProviderProps]: PropTypes.Validator<any>} = {
     defaultLocale: PropTypes.string.isRequired,
-    translations: PropTypes.object.isRequired,
     baseLocale: PropTypes.string.isRequired,
-    throwError: PropTypes.bool
+    commonTranslations: PropTypes.object,
+    onMissingTranslation: PropTypes.func,
+    onLocaleChanged: PropTypes.func
 };
 
 export interface LocaleProviderState {
+    translations: Map<string, TranslationsObject>;
     currentLocale: string;
 }
 
@@ -29,12 +33,25 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
     public static readonly childContextTypes = LocaleProviderContextTypes;
     public static readonly propTypes = LocaleProviderPropTypes;
 
-    public readonly state: LocaleProviderState = {
-        currentLocale: this.props.defaultLocale
-    };
+    private RegParser = new RegParser();
+
+    constructor(props) {
+        super(props);
+
+        const translations = new Map();
+        this.props.commonTranslations && Object.keys(this.props.commonTranslations).forEach((localeKey) => {
+            translations.set(localeKey, this.props.commonTranslations[localeKey]);
+        });
+
+        this.state = {
+            currentLocale: this.props.defaultLocale,
+            translations
+        };
+    }
 
     public getChildContext(): LocaleProviderContext {
         return {
+            registerCategory: this.registerCategory,
             availableLocales: this.avaliableLocales,
             currentLocale: this.state.currentLocale,
             translate: this.translate,
@@ -47,30 +64,54 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
     }
 
     protected get avaliableLocales(): Array<string> {
-        return [...Object.keys(this.props.translations), this.props.baseLocale];
+        return [...Array.from(this.state.translations.keys()), this.props.baseLocale];
     }
 
     protected setLocale = (nextLocale: string): void => {
-        this.setState({ currentLocale: nextLocale });
+        this.setState({ currentLocale: nextLocale }, () => {
+            this.props.onLocaleChanged && this.props.onLocaleChanged(this.state.currentLocale);
+        });
     }
 
-    protected translate = (category: string, value: string): string | never => {
+    protected translate = (category: string, value: string, params?: Params): string | never => {
         if (this.state.currentLocale === this.props.baseLocale) {
-            return value;
+            return params
+                ? this.RegParser.substitute(value, params)
+                : value;
         }
 
         let translation;
         try {
-            translation = this.props.translations[this.state.currentLocale][category][value];
+            translation = this.state.translations.get(this.state.currentLocale)[category][value];
+            if (!translation) {
+                throw new Error();
+            }
         } catch (error) {
-            if (this.props.throwError) {
-                throw error;
+            if (this.props.onMissingTranslation) {
+                return this.props.onMissingTranslation({ value, category, currentLocale: this.state.currentLocale });
             }
 
-            translation
-                = `Missing translation ${value} in category ${category} for language ${this.state.currentLocale}`;
+            translation = `Missing translation ${this.state.currentLocale}:${category}:${value}`;
         }
 
-        return translation;
+        return params
+            ? this.RegParser.substitute(translation, params)
+            : translation;
+    }
+
+    protected registerCategory = (translations: TranslationsObject): void => {
+        Object.keys(translations).forEach((localeKey) => {
+            if (!this.state.translations.get(localeKey)) {
+                // register new locale
+                return this.state.translations.set(localeKey, translations[localeKey] as TranslationsObject);
+            }
+
+            // register new category
+            this.state.translations.set(
+                localeKey,
+                { ...this.state.translations.get(localeKey), ...translations[localeKey] as TranslationsObject }
+            );
+        });
+        this.forceUpdate();
     }
 }
