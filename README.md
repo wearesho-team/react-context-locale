@@ -181,3 +181,34 @@ Will render:
     There are no cats
 </span>
 ```
+
+#### Helpers
+
+##### LangLink
+
+You can also use [react-router-dom](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-dom) to navigate on app with locale in url:
+
+```tsx
+<LangLink to="/index" {...NavLinkProps}>
+    Home
+</LangLink>
+```
+
+where
+- `NavLinkProps` - props of [NavLink](https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/NavLink.md) component
+
+Will render if current locale is same as base locale:
+
+```tsx
+<a href="/index">
+    Home
+<a>
+```
+
+Will render if current locale is `ua`:
+
+```tsx
+<a href="/ua/index">
+    Home
+<a>
+```

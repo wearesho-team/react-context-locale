@@ -54,6 +54,7 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
             registerCategory: this.registerCategory,
             availableLocales: this.avaliableLocales,
             currentLocale: this.state.currentLocale,
+            baseLocale: this.props.baseLocale,
             translate: this.translate,
             setLocale: this.setLocale
         };

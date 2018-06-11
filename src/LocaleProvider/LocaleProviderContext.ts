@@ -9,12 +9,14 @@ export interface LocaleProviderContext {
     setLocale: (nextLocale: string) => void;
     availableLocales: Array<string>;
     currentLocale: string;
+    baseLocale: string;
 }
 
 export const LocaleProviderContextTypes: {[P in keyof LocaleProviderContext]: PropTypes.Validator<any>} = {
     availableLocales: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     registerCategory: PropTypes.func.isRequired,
     currentLocale: PropTypes.string.isRequired,
+    baseLocale: PropTypes.string.isRequired,
     translate: PropTypes.func.isRequired,
     setLocale: PropTypes.func.isRequired
 };

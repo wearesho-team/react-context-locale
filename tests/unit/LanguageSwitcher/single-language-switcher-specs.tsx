@@ -21,7 +21,8 @@ describe("<SingleLanguageSwitcher/>", () => {
             context.currentLocale = nextLocale;
         },
         availableLocales: ["ru", "en", "gb"],
-        currentLocale: "ru"
+        currentLocale: "ru",
+        baseLocale: "ru"
     };
 
     beforeEach(() => {
