@@ -19,6 +19,7 @@ You must provide locale setting and controls with `LocaleProvider`.
 <LocaleProvider
     onMissingTranslation={({currentLocale, category, value}) => `Missing translation ${currentLocale}:${category}:${value}`}
     onLocaleChanged={(currentLocale) => console.log(`Locale changed to ${currentLocale}`)}
+    availableLocales={["ru", "en", "gb"]}
     commonTranslations={Translations}
     defaultLocale="ru"
     baseLocale="ru"
@@ -28,6 +29,7 @@ You must provide locale setting and controls with `LocaleProvider`.
 ```
 
 where
+ - `availableLocales` - list of available locales
  - `defaultLocale` - locale, that will be used on did mount
  - `baseLocale` - locale, that used as key for translation
  - `commonTranslations` - object, that contains commmon translations
@@ -50,7 +52,7 @@ Translations object example:
     }
 }
 ```
-*Note: In this example available locales is `gb`, `en` and base locale `ru`.*
+*Note: In this example `ru` locale is used as base locale, so it not needed for translation.*
 *Note: Categories name are not translatable*
 
 #### RegisterCategory 

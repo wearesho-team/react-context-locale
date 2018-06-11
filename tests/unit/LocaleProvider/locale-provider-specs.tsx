@@ -15,6 +15,7 @@ describe("<LocaleProvider/>", () => {
         wrapper = mount(
             <LocaleProvider
                 commonTranslations={commonTranslations}
+                availableLocales={["ru", "en", "gb"]}
                 defaultLocale="ru"
                 baseLocale="ru"
             >
@@ -67,6 +68,7 @@ describe("<LocaleProvider/>", () => {
         wrapper = mount(
             <LocaleProvider
                 onMissingTranslation={handleMissingTranslation}
+                availableLocales={["ru", "en", "gb"]}
                 defaultLocale="ru"
                 baseLocale="ru"
             >
@@ -87,6 +89,7 @@ describe("<LocaleProvider/>", () => {
 
         wrapper = mount(
             <LocaleProvider
+                availableLocales={["ru", "en", "gb"]}
                 defaultLocale="en"
                 baseLocale="ru"
             >
@@ -106,6 +109,7 @@ describe("<LocaleProvider/>", () => {
 
         wrapper = mount(
             <LocaleProvider
+                availableLocales={["ru", "en", "gb"]}
                 defaultLocale="ru"
                 baseLocale="ru"
             >
@@ -130,6 +134,7 @@ describe("<LocaleProvider/>", () => {
 
         wrapper = mount(
             <LocaleProvider
+                availableLocales={["ru", "en", "gb"]}
                 defaultLocale="en"
                 baseLocale="ru"
             >
@@ -156,6 +161,7 @@ describe("<LocaleProvider/>", () => {
 
         wrapper = mount(
             <LocaleProvider
+                availableLocales={["ru", "en", "gb"]}
                 onLocaleChanged={handleLocaleChanged}
                 defaultLocale="ru"
                 baseLocale="ru"

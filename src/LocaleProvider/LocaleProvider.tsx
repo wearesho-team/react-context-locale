@@ -1,8 +1,8 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 
-import { LocaleProviderContextTypes, LocaleProviderContext } from "./LocaleProviderContext";
 import { RegParser, Params } from "../RegParser";
+import { LocaleProviderContextTypes, LocaleProviderContext } from "./LocaleProviderContext";
 
 export interface TranslationsObject {
     [key: string]: string | TranslationsObject
@@ -12,15 +12,17 @@ export interface LocaleProviderProps {
     onMissingTranslation?: (params: { currentLocale: string; category: string, value: string }) => string;
     onLocaleChanged?: (currentLocale: string) => void;
     commonTranslations?: TranslationsObject;
+    availableLocales: Array<string>;
     defaultLocale: string;
     baseLocale: string;
 }
 
 export const LocaleProviderPropTypes: {[P in keyof LocaleProviderProps]: PropTypes.Validator<any>} = {
+    availableLocales: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     defaultLocale: PropTypes.string.isRequired,
     baseLocale: PropTypes.string.isRequired,
-    commonTranslations: PropTypes.object,
     onMissingTranslation: PropTypes.func,
+    commonTranslations: PropTypes.object,
     onLocaleChanged: PropTypes.func
 };
 
@@ -51,8 +53,8 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
 
     public getChildContext(): LocaleProviderContext {
         return {
+            availableLocales: this.props.availableLocales,
             registerCategory: this.registerCategory,
-            availableLocales: this.avaliableLocales,
             currentLocale: this.state.currentLocale,
             baseLocale: this.props.baseLocale,
             translate: this.translate,
@@ -62,10 +64,6 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
 
     public render(): React.ReactNode {
         return this.props.children;
-    }
-
-    protected get avaliableLocales(): Array<string> {
-        return [...Array.from(this.state.translations.keys()), this.props.baseLocale];
     }
 
     protected setLocale = (nextLocale: string): void => {
