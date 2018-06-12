@@ -61,12 +61,25 @@ Translations object example:
 To register new translation, use `RegisterCategory` component:
 
 ```tsx
-<RegisterCategory translations={Translations}>
+<RegisterCategory categoryName="testCategory" translations={{en: "Тест": "Test"}}>
     // ...
 </RegisterCategory>
 ```
 
+In storage it will be:
+
+```json
+{
+    "en": {
+        "testCategory": {
+            "Тест:" "Test"
+        }
+    }
+}
+```
+
 where
+- `categoryName` - new category name
 - `translations` - object, that contains new category translations
 
 *Note: Categories must be unique. If it doesn't, last registered category will be used and other will be deleted*
@@ -76,21 +89,23 @@ where
 To translate string you must wrap it into the `Translator` component:
 
 ```tsx
-<span>
-    <Translator category="mainPage">
-        Тестовый перевод
-    </Translator>
-</span>
+<RegisterCategory categoryName="testCategory" translations={Translations}>
+    <span>
+        <Translator category="mainPage">
+            Тестовый перевод
+        </Translator>
+    </span>
+</RegisterCategory>
 ```
 
 where
-- `category` - sub-object that contains translation strings
+- `category` - category name. Optional. In this case default are `testCategory`
 
 Or you can also use `t` function as HOC:
 
 ```tsx
 <span>
-    {t("mainPage", "Тестовый перевод")}
+    {t("Тестовый перевод", "mainPage")}
 </span>
 ```
 
@@ -141,6 +156,14 @@ It is only necessary to indicate the forms of the declined word in different sit
 </span>
 ```
 
+or
+
+```tsx
+<span>
+    {t("There _PLR(n! 0:are no cats, 1:is one cat, other:are # cats)!", "mainPage", {n: 10})}
+</span>
+```
+
 where
 - `params` - contains string arguments
 - `_PLR(*argument*! ...rules)` - plural string
@@ -149,9 +172,7 @@ Will render:
 
 ```tsx
 <span>
-    <Translator category="mainPage" params={{n: 10}}>
-        There are 10 cats!
-    </Translator>
+    There are 10 cats!
 </span>
 ```
 
@@ -171,7 +192,7 @@ Substring replacement:
 
 ```tsx
 <span>
-    <Translator category="mainPage" params={{where: "There", who: "are no cats"}}>
+    <Translator params={{where: "There", who: "are no cats"}}>
         [where] [who]
     </Translator>
 </span>

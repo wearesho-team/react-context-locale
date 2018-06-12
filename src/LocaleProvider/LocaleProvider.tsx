@@ -98,18 +98,18 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
             : translation;
     }
 
-    protected registerCategory = (translations: TranslationsObject): void => {
+    protected registerCategory = (categoryName: string, translations: TranslationsObject): void => {
         Object.keys(translations).forEach((localeKey) => {
             if (!this.state.translations.get(localeKey)) {
                 // register new locale
-                return this.state.translations.set(localeKey, translations[localeKey] as TranslationsObject);
+                return this.state.translations.set(localeKey, { [categoryName]: translations[localeKey] });
             }
 
             // register new category
-            this.state.translations.set(
-                localeKey,
-                { ...this.state.translations.get(localeKey), ...translations[localeKey] as TranslationsObject }
-            );
+            this.state.translations.set(localeKey, {
+                ...this.state.translations.get(localeKey),
+                [categoryName]: translations[localeKey]
+            });
         });
         this.forceUpdate();
     }

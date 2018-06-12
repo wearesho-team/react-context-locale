@@ -10,6 +10,24 @@ describe("<LocaleProvider/>", () => {
     let wrapper: ReactWrapper<{}, any>;
 
     const commonTranslations = { en: { errors: { format: "wrong format" } } };
+    const mainPageTranslations = {
+        gb: { "Тестовый перевод": "Übersetzung testen" },
+        en: { "Тестовый перевод": "Test translation" }
+    };
+    const pluralTranslations = {
+        gb: {
+            "[where] _PLR(n!, 0:нет кошек, 1:один кот, other: # котов)!":
+                "[where] _PLR(n!, 0:sind keine Katzen, 1:ist eine Katze, other: sind # Katzen)!"
+        },
+        en: {
+            "[where] _PLR(n!, 0:нет кошек, 1:один кот, other: # котов)!":
+                "[where] _PLR(n!, 0:are no cats, 1:is one cat, other: are # cats)!"
+        }
+    };
+    const emptyTranslations = {
+        gb: { text: "" },
+        en: { text: "" }
+    };
 
     beforeEach(() => {
         wrapper = mount(
@@ -18,9 +36,9 @@ describe("<LocaleProvider/>", () => {
                 availableLocales={["ru", "en", "gb"]}
                 baseLocale="ru"
             >
-                <RegisterCategory translations={Translations}>
+                <RegisterCategory categoryName="mainPage" translations={mainPageTranslations}>
                     <span>
-                        {t("mainPage", "Тестовый перевод")}
+                        {t("Тестовый перевод")}
                     </span>
                 </RegisterCategory>
             </LocaleProvider>
@@ -31,13 +49,17 @@ describe("<LocaleProvider/>", () => {
 
     it("Should register translations", () => {
         expect(JSON.stringify(wrapper.instance().state.translations.get("en")))
-            .to.equals(JSON.stringify({ ...commonTranslations.en, ...Translations.en }));
+            .to.equals(JSON.stringify({ ...commonTranslations.en, mainPage: mainPageTranslations.en }));
 
         const newCategory = { en: { testTranslation: "test translation" } };
 
-        (wrapper.instance() as any).getChildContext().registerCategory(newCategory);
+        (wrapper.instance() as any).getChildContext().registerCategory("newCategory", newCategory);
         expect(JSON.stringify(wrapper.instance().state.translations.get("en")))
-            .to.equals(JSON.stringify({ ...commonTranslations.en, ...Translations.en, ...newCategory.en }));
+            .to.equals(JSON.stringify({
+                ...commonTranslations.en,
+                mainPage: mainPageTranslations.en,
+                newCategory: newCategory.en
+            }));
     });
 
     it("Should not translate text, when baseLocale equals initialLocale", () => {
@@ -70,9 +92,9 @@ describe("<LocaleProvider/>", () => {
                 availableLocales={["ru", "en", "gb"]}
                 baseLocale="ru"
             >
-                <RegisterCategory translations={Translations}>
+                <RegisterCategory categoryName="mainPage" translations={mainPageTranslations}>
                     <span>
-                        {t("contactPage", "Тестовый перевод")}
+                        {t("text")}
                     </span>
                 </RegisterCategory>
             </LocaleProvider>
@@ -91,15 +113,15 @@ describe("<LocaleProvider/>", () => {
                 defaultLocale="en"
                 baseLocale="ru"
             >
-                <RegisterCategory translations={Translations}>
+                <RegisterCategory categoryName="mainPage" translations={mainPageTranslations}>
                     <span>
-                        {t("contactPage", "Тестовый перевод")}
+                        {t("text")}
                     </span>
                 </RegisterCategory>
             </LocaleProvider>
         );
 
-        expect(wrapper.getDOMNode().innerHTML).to.equals("Missing translation en:contactPage:Тестовый перевод");
+        expect(wrapper.getDOMNode().innerHTML).to.equals("Missing translation en:mainPage:text");
     });
 
     it("Should convert plural values to correct strings", () => {
@@ -110,11 +132,11 @@ describe("<LocaleProvider/>", () => {
                 availableLocales={["ru", "en", "gb"]}
                 baseLocale="ru"
             >
-                <RegisterCategory translations={Translations}>
+                <RegisterCategory categoryName="pluralPage" translations={pluralTranslations}>
                     <span>
                         <Translator category="pluralPage" params={{ n: 1, where: "На диване" }}>
                             [where] _PLR(n!, 0:нет кошек, 1:один кот, other: # котов)!
-                    </Translator>
+                        </Translator>
                     </span>
                 </RegisterCategory>
             </LocaleProvider>
@@ -135,11 +157,11 @@ describe("<LocaleProvider/>", () => {
                 defaultLocale="en"
                 baseLocale="ru"
             >
-                <RegisterCategory translations={Translations}>
+                <RegisterCategory categoryName="empty" translations={emptyTranslations}>
                     <span>
-                        <Translator category="empty">
+                        <Translator>
                             text
-                    </Translator>
+                        </Translator>
                     </span>
                 </RegisterCategory>
             </LocaleProvider>
@@ -162,9 +184,9 @@ describe("<LocaleProvider/>", () => {
                 onLocaleChanged={handleLocaleChanged}
                 baseLocale="ru"
             >
-                <RegisterCategory translations={Translations}>
+                <RegisterCategory categoryName="mainPage" translations={mainPageTranslations}>
                     <span>
-                        {t("mainPage", "Тестовый перевод")}
+                        {t("Тестовый перевод", "mainPage")}
                     </span>
                 </RegisterCategory>
             </LocaleProvider>

@@ -4,8 +4,8 @@ import { Params } from "../RegParser";
 import { TranslationsObject } from "./LocaleProvider";
 
 export interface LocaleProviderContext {
+    registerCategory: (categoryName: string, translations: TranslationsObject) => void;
     translate: (category: string, value: string, parms?: Params) => string;
-    registerCategory: (translations: TranslationsObject) => void;
     setLocale: (nextLocale: string) => void;
     availableLocales: Array<string>;
     currentLocale: string;
