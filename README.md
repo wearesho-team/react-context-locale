@@ -6,7 +6,7 @@
 Tool for localize application.
 
 ```tsx
-<span>{t("errors", "Wrong phone format")}</span>
+<span>{t("Wrong phone format", "errors")}</span>
 ```
 
 ## Usage
@@ -104,9 +104,7 @@ where
 Or you can also use `t` function as HOC:
 
 ```tsx
-<span>
-    {t("Тестовый перевод", "mainPage")}
-</span>
+<span>{t("Тестовый перевод", "mainPage")}</span>
 ```
 
 #### LanguageSwitcher
@@ -125,7 +123,7 @@ where
 `MultipleLanguageSwitcher` will render count of buttons according to available locales length:
 
 ```tsx
-<SingleLanguageSwitcher localeLabels={{ru: "RUS", en: "ENG", gb: "GER"}} activeClassName="is-active" {...HTMLButtonProps} />
+<MultipleLanguageSwitcher localeLabels={{ru: "RUS", en: "ENG", gb: "GER"}} activeClassName="is-active" {...HTMLButtonProps} />
 ```
 
 where
@@ -171,9 +169,7 @@ where
 Will render:
 
 ```tsx
-<span>
-    There are 10 cats!
-</span>
+<span>There are 10 cats!</span>
 ```
 
 Available rules:
@@ -213,9 +209,7 @@ Will render:
 You can also use [react-router-dom](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-dom) to navigate on app with locale prefix in url:
 
 ```tsx
-<LangLink to="/index" {...NavLinkProps}>
-    Home
-</LangLink>
+<LangLink to="/index" {...NavLinkProps}>Home</LangLink>
 ```
 
 where
@@ -224,17 +218,13 @@ where
 Will render if current locale is same as base locale:
 
 ```tsx
-<a href="/index">
-    Home
-<a>
+<a href="/index">Home</a>
 ```
 
 Will render if current locale is `ua`:
 
 ```tsx
-<a href="/ua/index">
-    Home
-<a>
+<a href="/ua/index">Home</a>
 ```
 
 ##### UrlChanger
@@ -245,7 +235,7 @@ If you need to change url with changing locale, use `UrlChanger` component:
 <BrowserRouter>
     <UrlChanger>
         <SingleLanguageSwitcher localeLabels={{ru: "RUS", en: "ENG", gb: "GER"}} {...HTMLButtonProps}/>
-    <UrlChanger>
+    </UrlChanger>
 </BrowserRouter>
 ```
 
