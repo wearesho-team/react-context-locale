@@ -13,16 +13,16 @@ export interface LocaleProviderProps {
     onLocaleChanged?: (currentLocale: string) => void;
     commonTranslations?: TranslationsObject;
     availableLocales: Array<string>;
-    defaultLocale: string;
+    defaultLocale?: string;
     baseLocale: string;
 }
 
 export const LocaleProviderPropTypes: {[P in keyof LocaleProviderProps]: PropTypes.Validator<any>} = {
     availableLocales: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-    defaultLocale: PropTypes.string.isRequired,
     baseLocale: PropTypes.string.isRequired,
     onMissingTranslation: PropTypes.func,
     commonTranslations: PropTypes.object,
+    defaultLocale: PropTypes.string,
     onLocaleChanged: PropTypes.func
 };
 
@@ -46,7 +46,7 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
         });
 
         this.state = {
-            currentLocale: this.props.defaultLocale,
+            currentLocale: this.props.defaultLocale || this.props.baseLocale,
             translations
         };
     }

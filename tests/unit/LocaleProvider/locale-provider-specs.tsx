@@ -16,7 +16,6 @@ describe("<LocaleProvider/>", () => {
             <LocaleProvider
                 commonTranslations={commonTranslations}
                 availableLocales={["ru", "en", "gb"]}
-                defaultLocale="ru"
                 baseLocale="ru"
             >
                 <RegisterCategory translations={Translations}>
@@ -69,7 +68,6 @@ describe("<LocaleProvider/>", () => {
             <LocaleProvider
                 onMissingTranslation={handleMissingTranslation}
                 availableLocales={["ru", "en", "gb"]}
-                defaultLocale="ru"
                 baseLocale="ru"
             >
                 <RegisterCategory translations={Translations}>
@@ -110,7 +108,6 @@ describe("<LocaleProvider/>", () => {
         wrapper = mount(
             <LocaleProvider
                 availableLocales={["ru", "en", "gb"]}
-                defaultLocale="ru"
                 baseLocale="ru"
             >
                 <RegisterCategory translations={Translations}>
@@ -163,7 +160,6 @@ describe("<LocaleProvider/>", () => {
             <LocaleProvider
                 availableLocales={["ru", "en", "gb"]}
                 onLocaleChanged={handleLocaleChanged}
-                defaultLocale="ru"
                 baseLocale="ru"
             >
                 <RegisterCategory translations={Translations}>

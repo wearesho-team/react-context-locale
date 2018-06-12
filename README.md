@@ -21,7 +21,7 @@ You must provide locale setting and controls with `LocaleProvider`.
     onLocaleChanged={(currentLocale) => console.log(`Locale changed to ${currentLocale}`)}
     availableLocales={["ru", "en", "gb"]}
     commonTranslations={Translations}
-    defaultLocale="ru"
+    defaultLocale="en"
     baseLocale="ru"
 >
     // ...
@@ -30,10 +30,10 @@ You must provide locale setting and controls with `LocaleProvider`.
 
 where
  - `availableLocales` - list of available locales
- - `defaultLocale` - locale, that will be used on did mount
  - `baseLocale` - locale, that used as key for translation
  - `commonTranslations` - object, that contains commmon translations
  - `onLocaleChanged` - will called, when locale was changed. Optional 
+ - `defaultLocale` - locale, that will be used on did mount. Optional. Default is same as `baseLocale` 
  - `onMissingTranslation` - will called, if translation key does not found in storage. Optional. If not passed, string with error description will be returned
 
 Translations object example:
@@ -53,6 +53,7 @@ Translations object example:
 }
 ```
 *Note: In this example `ru` locale is used as base locale, so it not needed for translation.*
+
 *Note: Categories name are not translatable*
 
 #### RegisterCategory 
@@ -72,7 +73,7 @@ where
 
 #### Translator
 
-To translate string you must wrap it to the `Translator` component:
+To translate string you must wrap it into the `Translator` component:
 
 ```tsx
 <span>
@@ -97,7 +98,7 @@ Or you can also use `t` function as HOC:
 
 For controlling switching locale, use `SingleLanguageSwitcher` or `MultipleLanguageSwitcher` component.
 
-`SingleLanguageSwitcher` will render single button, that will change locale in the same sequence, than locales declared in transaltions object:
+`SingleLanguageSwitcher` will render single button, that will change locale in the same sequence, than locales declared in `availableLocales`:
 
 ```tsx
 <SingleLanguageSwitcher localeLabels={{ru: "RUS", en: "ENG", gb: "GER"}} {...HTMLButtonProps}/>
@@ -142,7 +143,7 @@ It is only necessary to indicate the forms of the declined word in different sit
 
 where
 - `params` - contains string arguments
-- `_PRL(*argument*! ...rules)` - plural string
+- `_PLR(*argument*! ...rules)` - plural string
 
 Will render:
 
@@ -214,3 +215,17 @@ Will render if current locale is `ua`:
     Home
 <a>
 ```
+
+##### UrlChanger
+
+If you need to change url with changing locale, use `UrlChanger` component:
+
+```tsx
+<BrowserRouter>
+    <UrlChanger>
+        <SingleLanguageSwitcher localeLabels={{ru: "RUS", en: "ENG", gb: "GER"}} {...HTMLButtonProps}/>
+    <UrlChanger>
+</BrowserRouter>
+```
+
+*Note: This component use [react-router-dom](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-dom) context to change url*

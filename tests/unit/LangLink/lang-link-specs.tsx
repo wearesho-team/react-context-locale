@@ -6,7 +6,7 @@ import { BrowserRouter, NavLink } from "react-router-dom";
 import { LangLink } from "../../../src";
 import { LocaleProviderContext, LocaleProviderContextTypes } from "../../../src/LocaleProvider/LocaleProviderContext";
 
-describe("<OnLocale/>", () => {
+describe("<LangLink/>", () => {
     let wrapper: ReactWrapper<{}, {}>;
 
     const commonHandler = () => undefined;
