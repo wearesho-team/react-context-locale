@@ -14,13 +14,15 @@ describe("<MultipleLanguageSwitcher/>", () => {
     const commonHandler = () => undefined;
 
     const context: LocaleProviderContext = {
+        registerCategory: commonHandler,
         translate: commonHandler as any,
         setLocale: (nextLocale: string) => {
             setLocaleTriggered = true;
             context.currentLocale = nextLocale;
         },
         availableLocales: ["ru", "en", "gb"],
-        currentLocale: "ru"
+        currentLocale: "ru",
+        baseLocale: "ru"
     };
 
     beforeEach(() => {
@@ -70,5 +72,17 @@ describe("<MultipleLanguageSwitcher/>", () => {
         wrapper.simulate("click");
 
         expect(onClickTriggered).to.be.true;
+    });
+
+    it("Should paste label if if passed to 'localeLabels' prop according to current locale", () => {
+        wrapper.setProps({
+            localeLabels: {
+                ru: "RUS",
+                en: "ENG",
+                gb: "GER"
+            }
+        });
+
+        expect(wrapper.getDOMNode().innerHTML).to.contains("RUS");
     });
 })

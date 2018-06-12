@@ -12,13 +12,15 @@ describe("<OnLocale/>", () => {
     const commonHandler = () => undefined;
 
     const context: LocaleProviderContext = {
+        registerCategory: commonHandler,
         translate: commonHandler as any,
         setLocale: (nextLocale: string) => {
             setLocaleTriggered = true;
             context.currentLocale = nextLocale;
         },
         availableLocales: ["ru", "en", "gb"],
-        currentLocale: "ru"
+        currentLocale: "ru",
+        baseLocale: "ru"
     };
 
     beforeEach(() => {
