@@ -23,7 +23,7 @@
     "typescript"
   ],
   "author": "Wearesho",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/wearesho-team/react-context-locale/issues"
   },
