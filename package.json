@@ -1,6 +1,6 @@
 {
   "name": "react-context-locale",
-  "version": "1.0.0-rc2",
+  "version": "1.0.0-rc3",
   "description": "Localize app with react-context-locale",
   "main": "build/index.js",
   "typings": "build/src/index.d.ts",
@@ -59,6 +59,7 @@
     "prop-types": "^15.6.0",
     "react": "16.2.0",
     "react-dom": "^16.2.0",
+    "react-router-dom": "^4.3.1",
     "react-test-renderer": "^15.6.1",
     "sinon": "^3.2.1",
     "source-map-loader": "^0.2.1",
