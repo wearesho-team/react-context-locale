@@ -31,7 +31,7 @@ You must provide locale setting and controls with `LocaleProvider`.
 where
  - `availableLocales` - list of available locales
  - `baseLocale` - locale, that used as key for translation
- - `commonTranslations` - object, that contains commmon translations
+ - `commonTranslations` - object, that contains common translations
  - `onLocaleChanged` - will called, when locale was changed. Optional 
  - `defaultLocale` - locale, that will be used on did mount. Optional. Default is same as `baseLocale` 
  - `onMissingTranslation` - will called, if translation key does not found in storage. Optional. If not passed, string with error description will be returned
