@@ -9,6 +9,12 @@ Tool for localize application.
 <span>{t("Wrong phone format", "errors")}</span>
 ```
 
+## Installation
+
+Using [npm](https://www.npmjs.com/):
+
+    $ npm install --save react-context-locale
+
 ## Usage
 
 #### LocaleProvider
