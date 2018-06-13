@@ -4,7 +4,6 @@ import * as PropTypes from "prop-types";
 import { LocaleProviderContextTypes, LocaleProviderContext } from "../LocaleProvider/LocaleProviderContext";
 import { RegisterCategoryContextTypes, RegisterCategoryContext } from "../RegisterCategory";
 import { Params } from "../RegParser";
-import { LangLink } from "../helpers";
 
 export interface TranslatorProps {
     children: string;
