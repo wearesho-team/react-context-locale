@@ -1,12 +1,12 @@
 import { Plural } from "./Plural";
 
 export interface Params {
-    [key: string]: string | number
+    [key: string]: string | number;
 }
 
 export class RegParser {
     public substitute = (value: string, params: Params): string => {
-        let replaced = this.plural(value, params);
+        let replaced: string = this.plural(value, params);
 
         Object.keys(params).forEach((groupName) => {
             replaced = replaced
