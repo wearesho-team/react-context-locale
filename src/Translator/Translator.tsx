@@ -6,14 +6,16 @@ import { RegisterCategoryContextTypes, RegisterCategoryContext } from "../Regist
 import { Params } from "../RegParser";
 
 export interface TranslatorProps {
-    children: string;
+    render?: (translation: string) => React.ReactNode;
     category?: string;
+    children: string;
     params?: Params;
 }
 
 export const TranslatorPropTypes: {[P in keyof TranslatorProps]: PropTypes.Validator<any>} = {
     children: PropTypes.string.isRequired,
-    category: PropTypes.string
+    category: PropTypes.string,
+    render: PropTypes.func
 };
 
 export class Translator extends React.Component<TranslatorProps> {
@@ -26,6 +28,10 @@ export class Translator extends React.Component<TranslatorProps> {
     public readonly context: LocaleProviderContext & RegisterCategoryContext;
 
     public render(): React.ReactNode {
+        if (this.props.render) {
+            return this.props.render(this.translation);
+        }
+
         return this.translation;
     }
 
@@ -38,6 +44,11 @@ export class Translator extends React.Component<TranslatorProps> {
     }
 }
 
-export function t(value: string, category?: string, params?: Params): React.ReactNode {
+export function t(
+    value: string,
+    category?: string,
+    params?: Params,
+    render?: (translation: string) => React.ReactNode
+): React.ReactNode {
     return <Translator category={category} params={params}>{value}</Translator>;
 }

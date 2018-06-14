@@ -15,11 +15,11 @@ export const RegisterCategoryPropTypes: {[P in keyof RegisterCategoryProps]: Pro
 };
 
 export interface RegisterCategoryContext {
-    category: string;
+    category?: string;
 }
 
 export const RegisterCategoryContextTypes: {[P in keyof RegisterCategoryContext]: PropTypes.Validator<any>} = {
-    category: PropTypes.string.isRequired
+    category: PropTypes.string
 };
 
 export class RegisterCategory extends React.Component<RegisterCategoryProps> {

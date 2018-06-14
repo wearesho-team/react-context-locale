@@ -97,7 +97,7 @@ To translate string you must wrap it into the `Translator` component:
 ```tsx
 <RegisterCategory categoryName="testCategory" translations={Translations}>
     <span>
-        <Translator category="mainPage">
+        <Translator category="mainPage" render={(translated: string) => <span data-name={translated}/>}>
             Тестовый перевод
         </Translator>
     </span>
@@ -106,12 +106,14 @@ To translate string you must wrap it into the `Translator` component:
 
 where
 - `category` - category name. Optional. In this case default are `testCategory`
+- `render` - function, that return executing result to `Translator` render method. Optional. If not passed, string will be returned
 
-Or you can also use `t` function as HOC:
+Or you can also use `t` function:
 
 ```tsx
 <span>{t("Тестовый перевод", "mainPage")}</span>
 ```
+*Note: `t` function just return `Translator` component*
 
 #### LanguageSwitcher
 
