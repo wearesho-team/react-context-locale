@@ -122,16 +122,26 @@ For controlling switching locale, use `SingleLanguageSwitcher` or `MultipleLangu
 `SingleLanguageSwitcher` will render single button, that will change locale in the same sequence, than locales declared in `availableLocales`:
 
 ```tsx
-<SingleLanguageSwitcher localeLabels={{ru: "RUS", en: "ENG", gb: "GER"}} {...HTMLButtonProps}/>
+<SingleLanguageSwitcher 
+    render={(label: string, locale: string) => <span data-locale={locale}>{label}</span>}
+    localeLabels={{ru: "RUS", en: "ENG", gb: "GER"}} 
+    {...HTMLButtonProps}
+/>
 ```
 
 where
  - `localeLabels` - label, that will be displayed in button, according to current locale. Optional. If not passed, original locale name will be displayed
+ - `render` - function, that return executing result to `SingleLanguageSwitcher` render method. Optional. If not passed, string will be returned
 
 `MultipleLanguageSwitcher` will render count of buttons according to available locales length:
 
 ```tsx
-<MultipleLanguageSwitcher localeLabels={{ru: "RUS", en: "ENG", gb: "GER"}} activeClassName="is-active" {...HTMLButtonProps} />
+<MultipleLanguageSwitcher 
+    render={(label: string, locale: string) => <span data-locale={locale}>{label}</span>}
+    localeLabels={{ru: "RUS", en: "ENG", gb: "GER"}} 
+    activeClassName="is-active" 
+    {...HTMLButtonProps} 
+/>
 ```
 
 where
@@ -217,8 +227,12 @@ Will render:
 You can also use [react-router-dom](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-dom) to navigate on app with locale prefix in url:
 
 ```tsx
-<LangLink to="/index" {...NavLinkProps}>Home</LangLink>
+<BrowserRouter>
+    <LangLink to="/index" {...NavLinkProps}>Home</LangLink>
+</BrowserRouter>
 ```
+
+*Note: This component use [react-router-dom](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-dom) context*
 
 where
 - `NavLinkProps` - props of [NavLink](https://github.com/ReactTraining/react-router/blob/master/packages/react-router-dom/docs/api/NavLink.md) component
@@ -247,4 +261,22 @@ If you need to change url with changing locale, use `UrlChanger` component:
 </BrowserRouter>
 ```
 
-*Note: This component use [react-router-dom](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-dom) context to change url*
+*Note: This component use [react-router-dom](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-dom) context*
+
+##### LanguageSwitcherLink
+
+If you need to change locale with link instead button, use `LanguageSwitcherLink` component:
+
+```tsx
+<BrowserRouter>
+    <LanguageSwitcherLink language="ua">UA</LanguageSwitcherLink>
+    <LanguageSwitcherLink language="ru">RU</LanguageSwitcherLink>
+</BrowserRouter>
+```
+
+Will render (if current path `/index`, `baseLocale` is `ru`):
+
+```tsx
+<a href="/ua/index">UA</a>
+<a href="/index">RU</a>
+```

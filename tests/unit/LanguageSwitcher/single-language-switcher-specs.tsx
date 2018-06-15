@@ -90,4 +90,10 @@ describe("<SingleLanguageSwitcher/>", () => {
         wrapper.setContext({ ...context });
         expect(wrapper.getDOMNode().innerHTML).to.equals("RUS");
     });
+
+    it("Should return 'render' prop result on render if it passed", () => {
+        wrapper.setProps({ render: (label) => "test" });
+
+        expect(wrapper.getDOMNode().innerHTML).to.contains("test");
+    });
 })
