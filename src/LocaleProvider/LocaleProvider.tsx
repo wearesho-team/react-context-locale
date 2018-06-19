@@ -95,7 +95,7 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
             translation = `Missing translation ${this.state.currentLocale}:${category}:${value}`;
         }
 
-        if (this.props.onSameTranslation) {
+        if (this.props.onSameTranslation && translation === value) {
             return this.props.onSameTranslation({ value, category, currentLocale: this.state.currentLocale });
         }
 
