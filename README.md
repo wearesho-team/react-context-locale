@@ -19,10 +19,11 @@ Using [npm](https://www.npmjs.com/):
 
 #### LocaleProvider
 
-You must provide locale setting and controls with `LocaleProvider`.
+You must provide locale setting and controls with `LocaleProvider`:
 
 ```tsx
 <LocaleProvider
+    onSameTranslation={({currentLocale, category, value}) => `Translated string is same as key ${currentLocale}:${category}:${value}`}
     onMissingTranslation={({currentLocale, category, value}) => `Missing translation ${currentLocale}:${category}:${value}`}
     onLocaleChanged={(currentLocale) => console.log(`Locale changed to ${currentLocale}`)}
     availableLocales={["ru", "en", "gb"]}
@@ -35,12 +36,13 @@ You must provide locale setting and controls with `LocaleProvider`.
 ```
 
 where
- - `availableLocales` - list of available locales
- - `baseLocale` - locale, that used as key for translation
- - `commonTranslations` - object, that contains common translations
- - `onLocaleChanged` - will called, when locale was changed. Optional 
- - `defaultLocale` - locale, that will be used on did mount. Optional. Default is same as `baseLocale` 
- - `onMissingTranslation` - will called, if translation key does not found in storage. Optional. If not passed, string with error description will be returned
+ - `availableLocales` - list of available locales.
+ - `baseLocale` - locale, that used as key for translation.
+ - `commonTranslations` - object, that contains common translations.
+ - `onLocaleChanged` - will called, when locale was changed. Optional.
+ - `onSameTranslation` - will called, when translated string is same as key. Optional.
+ - `defaultLocale` - locale, that will be used on did mount. Optional. Default is same as `baseLocale`.
+ - `onMissingTranslation` - will called, when translation key does not found in storage. Optional. If not passed, string with error description will be returned.
 
 Translations object example:
 
