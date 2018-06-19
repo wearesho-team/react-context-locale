@@ -4,8 +4,6 @@ import { ReactWrapper, mount } from "enzyme";
 
 import { LocaleProvider, t, Translator, RegisterCategory } from "../../../src";
 
-const Translations = require("../../translations.json");
-
 describe("<LocaleProvider/>", () => {
     let wrapper: ReactWrapper<{}, any>;
 
@@ -27,6 +25,10 @@ describe("<LocaleProvider/>", () => {
     const emptyTranslations = {
         gb: { text: "" },
         en: { text: "" }
+    };
+    const sameTranslations = {
+        gb: { text: "text" },
+        en: { text: "text" }
     };
 
     beforeEach(() => {
@@ -68,10 +70,10 @@ describe("<LocaleProvider/>", () => {
 
     it("Should translate text according to current locale", () => {
         (wrapper.instance() as any).getChildContext().setLocale("en");
-        expect(wrapper.getDOMNode().innerHTML).to.equals(Translations.en.mainPage["Тестовый перевод"]);
+        expect(wrapper.getDOMNode().innerHTML).to.equals(mainPageTranslations.en["Тестовый перевод"]);
 
         (wrapper.instance() as any).getChildContext().setLocale("gb");
-        expect(wrapper.getDOMNode().innerHTML).to.equals(Translations.gb.mainPage["Тестовый перевод"]);
+        expect(wrapper.getDOMNode().innerHTML).to.equals(mainPageTranslations.gb["Тестовый перевод"]);
 
         (wrapper.instance() as any).getChildContext().setLocale("ru");
         expect(wrapper.getDOMNode().innerHTML).to.equals("Тестовый перевод");
@@ -195,4 +197,32 @@ describe("<LocaleProvider/>", () => {
         (wrapper.instance() as any).getChildContext().setLocale("en");
         expect(handlerTriggered).to.be.true;
     });
+
+    it("Should call `onSameTranslation` prop when translation is same as key if it prop passed", () => {
+        wrapper.unmount();
+
+        let handlerTriggered = false;
+        const handleSameTranslation = (args) => {
+            handlerTriggered = true;
+            return "";
+        }
+
+        wrapper = mount(
+            <LocaleProvider
+                onSameTranslation={handleSameTranslation}
+                availableLocales={["ru", "en", "gb"]}
+                baseLocale="ru"
+            >
+                <RegisterCategory categoryName="same" translations={sameTranslations}>
+                    <span>
+                        {t("text")}
+                    </span>
+                </RegisterCategory>
+            </LocaleProvider>
+        );
+
+        (wrapper.instance() as any).getChildContext().setLocale("en");
+        expect(handlerTriggered).to.be.true;
+    });
+    
 });
