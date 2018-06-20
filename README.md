@@ -276,6 +276,8 @@ If you need to change locale with link instead button, use `LanguageSwitcherLink
 </BrowserRouter>
 ```
 
+*Note: This component use [react-router-dom](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-dom) context*
+
 Will render (if current path `/index`, `baseLocale` is `ru`):
 
 ```tsx

@@ -7,7 +7,6 @@ import { LocaleProvider, t, Translator, RegisterCategory } from "../../../src";
 describe("<LocaleProvider/>", () => {
     let wrapper: ReactWrapper<{}, any>;
 
-    const commonTranslations = { en: { errors: { format: "wrong format" } } };
     const mainPageTranslations = {
         gb: { "Тестовый перевод": "Übersetzung testen" },
         en: { "Тестовый перевод": "Test translation" }
@@ -22,14 +21,9 @@ describe("<LocaleProvider/>", () => {
                 "[where] _PLR(n!, 0:are no cats, 1:is one cat, other: are # cats)!"
         }
     };
-    const emptyTranslations = {
-        gb: { text: "" },
-        en: { text: "" }
-    };
-    const sameTranslations = {
-        gb: { text: "text" },
-        en: { text: "text" }
-    };
+    const emptyTranslations = { gb: { text: "" }, en: { text: "" } };
+    const sameTranslations = { gb: { text: "text" }, en: { text: "text" } };
+    const commonTranslations = { en: { errors: { format: "wrong format" } } };
 
     beforeEach(() => {
         wrapper = mount(
@@ -39,9 +33,7 @@ describe("<LocaleProvider/>", () => {
                 baseLocale="ru"
             >
                 <RegisterCategory categoryName="mainPage" translations={mainPageTranslations}>
-                    <span>
-                        {t("Тестовый перевод")}
-                    </span>
+                    <span>{t("Тестовый перевод")}</span>
                 </RegisterCategory>
             </LocaleProvider>
         );
@@ -83,10 +75,7 @@ describe("<LocaleProvider/>", () => {
         wrapper.unmount();
 
         let handlerTriggered = false;
-        const handleMissingTranslation = (args) => {
-            handlerTriggered = true;
-            return "";
-        }
+        const handleMissingTranslation = () => String(handlerTriggered = true);
 
         wrapper = mount(
             <LocaleProvider
@@ -95,9 +84,7 @@ describe("<LocaleProvider/>", () => {
                 baseLocale="ru"
             >
                 <RegisterCategory categoryName="mainPage" translations={mainPageTranslations}>
-                    <span>
-                        {t("text")}
-                    </span>
+                    <span>{t("text")}</span>
                 </RegisterCategory>
             </LocaleProvider>
         );
@@ -108,7 +95,6 @@ describe("<LocaleProvider/>", () => {
 
     it("Should return error string when translation missing if 'onMissingTranslation' prop not passed", () => {
         wrapper.unmount();
-
         wrapper = mount(
             <LocaleProvider
                 availableLocales={["ru", "en", "gb"]}
@@ -116,9 +102,7 @@ describe("<LocaleProvider/>", () => {
                 baseLocale="ru"
             >
                 <RegisterCategory categoryName="mainPage" translations={mainPageTranslations}>
-                    <span>
-                        {t("text")}
-                    </span>
+                    <span>{t("text")}</span>
                 </RegisterCategory>
             </LocaleProvider>
         );
@@ -128,12 +112,8 @@ describe("<LocaleProvider/>", () => {
 
     it("Should convert plural values to correct strings", () => {
         wrapper.unmount();
-
         wrapper = mount(
-            <LocaleProvider
-                availableLocales={["ru", "en", "gb"]}
-                baseLocale="ru"
-            >
+            <LocaleProvider availableLocales={["ru", "en", "gb"]} baseLocale="ru">
                 <RegisterCategory categoryName="pluralPage" translations={pluralTranslations}>
                     <span>
                         <Translator category="pluralPage" params={{ n: 1, where: "На диване" }}>
@@ -152,7 +132,6 @@ describe("<LocaleProvider/>", () => {
 
     it("Should return error string if translation field is empty string", () => {
         wrapper.unmount();
-
         wrapper = mount(
             <LocaleProvider
                 availableLocales={["ru", "en", "gb"]}
@@ -160,11 +139,7 @@ describe("<LocaleProvider/>", () => {
                 baseLocale="ru"
             >
                 <RegisterCategory categoryName="empty" translations={emptyTranslations}>
-                    <span>
-                        <Translator>
-                            text
-                        </Translator>
-                    </span>
+                    <span><Translator>text</Translator></span>
                 </RegisterCategory>
             </LocaleProvider>
         );
@@ -176,9 +151,7 @@ describe("<LocaleProvider/>", () => {
         wrapper.unmount();
 
         let handlerTriggered = false;
-        const handleLocaleChanged = () => {
-            handlerTriggered = true;
-        }
+        const handleLocaleChanged = () => handlerTriggered = true;
 
         wrapper = mount(
             <LocaleProvider
@@ -187,9 +160,7 @@ describe("<LocaleProvider/>", () => {
                 baseLocale="ru"
             >
                 <RegisterCategory categoryName="mainPage" translations={mainPageTranslations}>
-                    <span>
-                        {t("Тестовый перевод", "mainPage")}
-                    </span>
+                    <span>{t("Тестовый перевод", "mainPage")}</span>
                 </RegisterCategory>
             </LocaleProvider>
         );
@@ -202,10 +173,7 @@ describe("<LocaleProvider/>", () => {
         wrapper.unmount();
 
         let handlerTriggered = false;
-        const handleSameTranslation = (args) => {
-            handlerTriggered = true;
-            return "";
-        }
+        const handleSameTranslation = () => String(handlerTriggered = true);
 
         wrapper = mount(
             <LocaleProvider
@@ -214,9 +182,7 @@ describe("<LocaleProvider/>", () => {
                 baseLocale="ru"
             >
                 <RegisterCategory categoryName="same" translations={sameTranslations}>
-                    <span>
-                        {t("text")}
-                    </span>
+                    <span>{t("text")}</span>
                 </RegisterCategory>
             </LocaleProvider>
         );
@@ -224,5 +190,5 @@ describe("<LocaleProvider/>", () => {
         (wrapper.instance() as any).getChildContext().setLocale("en");
         expect(handlerTriggered).to.be.true;
     });
-    
+
 });
