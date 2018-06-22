@@ -14,13 +14,15 @@ describe("<SingleLanguageSwitcher/>", () => {
     const commonHandler = () => undefined;
 
     const context: LocaleProviderContext = {
+        registerCategory: commonHandler,
         translate: commonHandler as any,
         setLocale: (nextLocale: string) => {
             setLocaleTriggered = true;
             context.currentLocale = nextLocale;
         },
         availableLocales: ["ru", "en", "gb"],
-        currentLocale: "ru"
+        currentLocale: "ru",
+        baseLocale: "ru"
     };
 
     beforeEach(() => {
@@ -78,14 +80,20 @@ describe("<SingleLanguageSwitcher/>", () => {
             }
         });
 
-        expect(wrapper.getDOMNode().innerHTML).to.equals("RUS");
-
-        wrapper.simulate("click");
-        wrapper.setContext({ ...context });
         expect(wrapper.getDOMNode().innerHTML).to.equals("ENG");
 
         wrapper.simulate("click");
         wrapper.setContext({ ...context });
         expect(wrapper.getDOMNode().innerHTML).to.equals("GER");
+
+        wrapper.simulate("click");
+        wrapper.setContext({ ...context });
+        expect(wrapper.getDOMNode().innerHTML).to.equals("RUS");
+    });
+
+    it("Should return 'render' prop result on render if it passed", () => {
+        wrapper.setProps({ render: (label) => "test" });
+
+        expect(wrapper.getDOMNode().innerHTML).to.contains("test");
     });
 })

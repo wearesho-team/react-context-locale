@@ -4,6 +4,7 @@ import * as PropTypes from "prop-types";
 import { LocaleProviderContext, LocaleProviderContextTypes } from "../LocaleProvider/LocaleProviderContext";
 
 export interface MultipleLanguageSwitcherProps extends React.HTMLProps<HTMLButtonElement> {
+    render?: (label: string, locale: string) => React.ReactNode;
     localeLabels?: { [key: string]: string };
     activeClassName?: string;
 }
@@ -11,7 +12,8 @@ export interface MultipleLanguageSwitcherProps extends React.HTMLProps<HTMLButto
 export const MultipleLanguageSwitcherPropTypes:
     {[P in keyof MultipleLanguageSwitcherProps]: PropTypes.Validator<any>} = {
         activeClassName: PropTypes.string,
-        localeLabels: PropTypes.object
+        localeLabels: PropTypes.object,
+        render: PropTypes.func
     };
 
 export const MultipleLanguageSwitcherDefaultProps:
@@ -27,7 +29,7 @@ export class MultipleLanguageSwitcher extends React.Component<MultipleLanguageSw
     public readonly context: LocaleProviderContext;
 
     public render(): React.ReactNode {
-        const { onClick, type, className, localeLabels, activeClassName, ...buttonProps } = this.props;
+        const { render, onClick, type, className, localeLabels, activeClassName, ...buttonProps } = this.props;
 
         return this.context.availableLocales.map((locale) => (
             <button
@@ -37,9 +39,13 @@ export class MultipleLanguageSwitcher extends React.Component<MultipleLanguageSw
                 className={this.getClassName(locale)}
                 {...buttonProps}
             >
-                {localeLabels ? localeLabels[this.context.currentLocale] : this.context.currentLocale}
+                {render ? render(this.getLabel(locale), locale) : this.getLabel(locale)}
             </button>
         ));
+    }
+
+    protected getLabel = (locale: string): string => {
+        return this.props.localeLabels ? this.props.localeLabels[locale] : locale
     }
 
     protected getHandleClick = (buttonLocale: string) => (event: React.MouseEvent<HTMLButtonElement>): void => {
