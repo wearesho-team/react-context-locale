@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 import { NavLink, NavLinkProps } from "react-router-dom";
+import { LocationDescriptor, LocationDescriptorObject } from "history";
 
 import { LocaleProviderContextTypes, LocaleProviderContext } from "../LocaleProvider/LocaleProviderContext";
 
@@ -26,11 +27,16 @@ export class LangLink extends React.Component<NavLinkProps> {
         return <NavLink {...restProps} to={this.to}>{this.props.children}</NavLink>;
     }
 
-    protected get to(): string {
+    protected get to(): LocationDescriptor {
         const urlPrefix = this.context.currentLocale !== this.context.baseLocale
             ? `/${this.context.currentLocale}`
             : "";
 
-        return `${urlPrefix}${this.props.to}`
+        return (typeof this.props.to).toLowerCase() === "string"
+            ? `${urlPrefix}${this.props.to}`
+            : {
+                ...this.props.to as LocationDescriptorObject,
+                pathname: `${urlPrefix}${(this.props.to as LocationDescriptorObject).pathname || ""}`
+            };
     }
 }

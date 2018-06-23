@@ -38,8 +38,42 @@ describe("<LangLink/>", () => {
     it("Should render NavLink without prefix when current locale is same as base locale", () => {
         expect((wrapper.find(NavLink).props().to)).to.equals("/index");
 
-        wrapper.setContext({currentLocale: "ua"});
+        wrapper.setContext({ currentLocale: "ua" });
 
         expect((wrapper.find(NavLink).props().to)).to.equals("/ua/index");
+    });
+
+    it("should handle Description object", () => {
+        wrapper.unmount();
+        wrapper = mount(
+            <BrowserRouter>
+                <LangLink to={{ pathname: "/index" }}>
+                    Home
+                </LangLink>
+            </BrowserRouter>,
+            { context, childContextTypes: LocaleProviderContextTypes }
+        );
+
+        expect(((wrapper.find(NavLink).props().to as any).pathname)).to.equals("/index");
+
+        wrapper.setContext({ currentLocale: "ua" });
+
+        expect(((wrapper.find(NavLink).props().to as any).pathname)).to.equals("/ua/index");
+
+        wrapper.unmount();
+        wrapper = mount(
+            <BrowserRouter>
+                <LangLink to={{}}>
+                    Home
+                </LangLink>
+            </BrowserRouter>,
+            { context, childContextTypes: LocaleProviderContextTypes }
+        );
+
+        expect(((wrapper.find(NavLink).props().to as any).pathname)).to.equals("");
+
+        wrapper.setContext({ currentLocale: "ua" });
+
+        expect(((wrapper.find(NavLink).props().to as any).pathname)).to.equals("/ua");
     });
 });
