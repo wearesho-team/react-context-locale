@@ -11,6 +11,8 @@ describe("<LangLink/>", () => {
 
     const commonHandler = () => undefined;
     const context: LocaleProviderContext = {
+        addEventListener: commonHandler,
+        removeEventListener: commonHandler,
         registerCategory: commonHandler,
         translate: commonHandler as any,
         setLocale: commonHandler as any,

@@ -191,4 +191,38 @@ describe("<LocaleProvider/>", () => {
         expect(handlerTriggered).to.be.true;
     });
 
+    it("Should add event listener to listeners Set", () => {
+        let isChanged = false;
+        const changeHandler = () => isChanged = true;
+
+        (wrapper.instance() as any).getChildContext().addEventListener("change", changeHandler);
+        (wrapper.instance() as any).getChildContext().setLocale("en");
+
+        expect(isChanged).to.be.true;
+
+        let isCatergoryRegistered = false;
+        const registerCategoryHandler = () => isCatergoryRegistered = true;
+        (wrapper.instance() as any).getChildContext().addEventListener("register", registerCategoryHandler);
+
+        (wrapper.instance() as any).getChildContext().registerCategory("someCategory", {});
+        expect(isCatergoryRegistered).to.be.true;
+    });
+
+    it("Should remove event listener from listeners Set", () => {
+        let isChanged = false;
+        const changeHandler = () => isChanged = true;
+
+        (wrapper.instance() as any).getChildContext().addEventListener("change", changeHandler);
+        (wrapper.instance() as any).getChildContext().setLocale("en");
+
+        expect(isChanged).to.be.true;
+
+        isChanged = false;
+        (wrapper.instance() as any).getChildContext().removeEventListener("change", changeHandler);
+        (wrapper.instance() as any).getChildContext().setLocale("ru");
+        expect(isChanged).to.be.false;
+
+    });
+
 });
+// tslint:disable-next-line

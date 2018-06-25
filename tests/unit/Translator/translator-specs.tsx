@@ -12,6 +12,8 @@ describe("<OnLocale/>", () => {
     const value = "test";
 
     const context: LocaleProviderContext = {
+        addEventListener: commonHandler,
+        removeEventListener: commonHandler,
         registerCategory: commonHandler,
         translate: () => value,
         setLocale: commonHandler,
