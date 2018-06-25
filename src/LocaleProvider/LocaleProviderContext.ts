@@ -14,7 +14,7 @@ export interface LocaleEvents {
 export type EventListenerCallback<T> = (args: T) => void;
 
 export interface LocaleProviderContext {
-    addEventListener: (event: keyof LocaleEvents, callback: EventListenerCallback<any>) => void | never;    
+    addEventListener: (event: keyof LocaleEvents, callback: EventListenerCallback<any>) => void | never;
     removeEventListener: (event: keyof LocaleEvents, callback: EventListenerCallback<any>) => void;
     registerCategory: (categoryName: string, translations: TranslationsObject) => void;
     translate: (category: string, value: string, parms?: Params) => string;
