@@ -37,7 +37,7 @@ export class EventInterceptor extends React.Component<EventInterceptorProps> {
     }
 
     public componentWillUnmount() {
-        this.context.removeEventListener("change", this.props.onEvent);
+        this.context.removeEventListener(this.props.event, this.props.onEvent);
     }
 
     public render(): React.ReactNode {
