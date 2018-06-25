@@ -6,18 +6,16 @@ export interface TranslationsObject {
     [key: string]: string | TranslationsObject
 };
 
-export type LocaleEvent = "change" | "register";
-export enum LocaleEvents {
-    change = "change",
-    register = "register",
+export interface LocaleEvents {
+    change: EventListenerCallback<{ oldLocale: string; newLocale: string }>;
+    register: EventListenerCallback<string>;
 }
+
 export type EventListenerCallback<T> = (args: T) => void;
-export type RegisterCallback = EventListenerCallback<string>;
-export type ChangeCallback = EventListenerCallback<{ oldLocale: string; newLocale: string }>;
 
 export interface LocaleProviderContext {
-    addEventListener: <T = any>(event: LocaleEvent, callback: EventListenerCallback<T>) => void;
-    removeEventListener: (event: LocaleEvent, callback: EventListenerCallback<any>) => void;
+    addEventListener: (event: keyof LocaleEvents, callback: EventListenerCallback<any>) => void | never;    
+    removeEventListener: (event: keyof LocaleEvents, callback: EventListenerCallback<any>) => void;
     registerCategory: (categoryName: string, translations: TranslationsObject) => void;
     translate: (category: string, value: string, parms?: Params) => string;
     setLocale: (nextLocale: string) => void;

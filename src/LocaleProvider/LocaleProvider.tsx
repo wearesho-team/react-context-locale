@@ -7,10 +7,7 @@ import {
     LocaleProviderContext,
     EventListenerCallback,
     TranslationsObject,
-    RegisterCallback,
-    ChangeCallback,
-    LocaleEvents,
-    LocaleEvent
+    LocaleEvents
 } from "./LocaleProviderContext";
 
 export interface LocaleProviderProps {
@@ -43,9 +40,9 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
     public static readonly propTypes = LocaleProviderPropTypes;
 
     private RegParser = new RegParser();
-    private listeners: {[P in keyof typeof LocaleEvents]: Set<ChangeCallback | RegisterCallback> } = {
-        change: new Set() as Set<ChangeCallback>,
-        register: new Set() as Set<RegisterCallback>,
+    private listeners: {[P in keyof LocaleEvents]: Set<LocaleEvents[keyof LocaleEvents]> } = {
+        register: new Set(),
+        change: new Set()
     };
 
     constructor(props) {
@@ -80,11 +77,15 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
         return this.props.children;
     }
 
-    protected addEventListener = (event: LocaleEvent, callback: EventListenerCallback<any>): void => {
+    protected addEventListener = (event: keyof LocaleEvents, callback: EventListenerCallback<any>): void | never => {
+        if (!Object.keys(this.listeners).includes(event)) {
+            throw new Error(`Event '${event}' does not suppor's`);
+        }
+
         this.listeners[event].add(callback);
     }
 
-    protected removeEventListener = (event: LocaleEvent, callback: EventListenerCallback<any>): void => {
+    protected removeEventListener = (event: keyof LocaleEvents, callback: EventListenerCallback<any>): void => {
         this.listeners[event].delete(callback);
     }
 
@@ -92,7 +93,7 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
         const oldLocale = this.state.currentLocale;
         this.setState({ currentLocale: nextLocale }, () => {
             this.props.onLocaleChanged && this.props.onLocaleChanged(this.state.currentLocale);
-            this.listeners.change.forEach((callback: ChangeCallback) => callback({
+            this.listeners.change.forEach((callback: LocaleEvents["change"]) => callback({
                 oldLocale,
                 newLocale: this.state.currentLocale
             }));
@@ -144,6 +145,6 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
         });
         this.forceUpdate();
 
-        this.listeners.register.forEach((callback: RegisterCallback) => callback(categoryName));
+        this.listeners.register.forEach((callback: LocaleEvents["register"]) => callback(categoryName));
     }
 }
