@@ -15,6 +15,8 @@ export class UrlChanger extends React.Component {
 
     public getChildContext(): LocaleProviderContext {
         return {
+            removeEventListener: this.context.removeEventListener,
+            addEventListener: this.context.addEventListener,
             registerCategory: this.context.registerCategory,
             availableLocales: this.context.availableLocales,
             currentLocale: this.context.currentLocale,

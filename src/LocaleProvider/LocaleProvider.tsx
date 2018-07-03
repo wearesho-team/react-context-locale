@@ -2,11 +2,13 @@ import * as React from "react";
 import * as PropTypes from "prop-types";
 
 import { RegParser, Params } from "../RegParser";
-import { LocaleProviderContextTypes, LocaleProviderContext } from "./LocaleProviderContext";
-
-export interface TranslationsObject {
-    [key: string]: string | TranslationsObject
-};
+import {
+    LocaleProviderContextTypes,
+    LocaleProviderContext,
+    EventListenerCallback,
+    TranslationsObject,
+    LocaleEvents
+} from "./LocaleProviderContext";
 
 export interface LocaleProviderProps {
     onMissingTranslation?: (params: { currentLocale: string; category: string, value: string }) => string;
@@ -38,6 +40,10 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
     public static readonly propTypes = LocaleProviderPropTypes;
 
     private RegParser = new RegParser();
+    private listeners: {[P in keyof LocaleEvents]: Set<LocaleEvents[keyof LocaleEvents]> } = {
+        register: new Set(),
+        change: new Set()
+    };
 
     constructor(props) {
         super(props);
@@ -60,7 +66,10 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
             currentLocale: this.state.currentLocale,
             baseLocale: this.props.baseLocale,
             translate: this.translate,
-            setLocale: this.setLocale
+            setLocale: this.setLocale,
+
+            addEventListener: this.addEventListener,
+            removeEventListener: this.removeEventListener
         };
     }
 
@@ -68,9 +77,26 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
         return this.props.children;
     }
 
+    protected addEventListener = (event: keyof LocaleEvents, callback: EventListenerCallback<any>): void | never => {
+        if (!Object.keys(this.listeners).includes(event)) {
+            throw new Error(`Event '${event}' does not suppor's`);
+        }
+
+        this.listeners[event].add(callback);
+    }
+
+    protected removeEventListener = (event: keyof LocaleEvents, callback: EventListenerCallback<any>): void => {
+        this.listeners[event].delete(callback);
+    }
+
     protected setLocale = (nextLocale: string): void => {
+        const oldLocale = this.state.currentLocale;
         this.setState({ currentLocale: nextLocale }, () => {
             this.props.onLocaleChanged && this.props.onLocaleChanged(this.state.currentLocale);
+            this.listeners.change.forEach((callback: LocaleEvents["change"]) => callback({
+                oldLocale,
+                newLocale: this.state.currentLocale
+            }));
         });
     }
 
@@ -118,5 +144,7 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
             });
         });
         this.forceUpdate();
+
+        this.listeners.register.forEach((callback: LocaleEvents["register"]) => callback(categoryName));
     }
 }

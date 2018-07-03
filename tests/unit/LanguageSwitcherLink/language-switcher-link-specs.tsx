@@ -13,6 +13,8 @@ describe("<LanguageSwictherLink/>", () => {
     const commonHandler = () => undefined;
     let setLocaletriggered = false;
     const context: LocaleProviderContext = {
+        addEventListener: commonHandler,
+        removeEventListener: commonHandler,
         registerCategory: commonHandler,
         translate: commonHandler as any,
         setLocale: () => setLocaletriggered = true,

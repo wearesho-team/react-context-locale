@@ -162,6 +162,27 @@ If you need to display some markup only for specified locale, use `OnLocale` com
 where
 - `locale` - locale on which showing markup
 
+#### EventInterceptor
+
+Use `EventInterceptor` component, when you need to catch events:
+
+```tsx
+<EventInterceptor event="change" onEvent={(params: { newLocale: string; oldLocale: string }) => console.log(params))}>
+    // ...
+</EventInterceptor>
+<EventInterceptor event="register" onEvent={(categoryName: string) => console.log(categoryName))}>
+    // ...
+</EventInterceptor>
+```
+
+where
+- `event` - event type.
+- `onEvent` - will called, when event triggered.
+
+available events:
+- `change` - event, that triggers when locale was changed.
+- `register` - event, that triggers when new category was registered.
+
 #### Plural
 
 It is only necessary to indicate the forms of the declined word in different situations:
@@ -221,6 +242,21 @@ Will render:
     There are no cats
 </span>
 ```
+
+#### Context API
+
+`LocaleProvider` component provide [next context](https://github.com/wearesho-team/react-context-locale/blob/master/src/LocaleProvider/LocaleProviderContext.ts).
+You can consume it for creating your own componetns.
+
+where
+- `registerCategory` - method for registering a new category.
+- `translate` - method for translating string. Return translated string.
+- `setLocale` - method for setting new current locale.
+- `availableLocales` - array, that contains available locales.
+- `currentLocale` - string, that matches to current locale.
+- `baseLocale` - string, that matches to base locale.
+- `addEventListener` - method for adding locale event listeners.
+- `removeEventListener` - method for removing locale event listeners.
 
 #### Helpers
 
