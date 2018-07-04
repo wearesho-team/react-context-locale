@@ -7,8 +7,13 @@ export class Storage {
 
     private storage: Map<string, TranslationsObject>;
 
-    constructor() {
+    constructor(initalLocale?: string, initalRecords?: TranslationsObject) {
         this.storage = new Map();
+
+        this.currentLocale = initalLocale;
+        initalRecords && Object.keys(initalRecords).forEach((locale) => {
+            this.writeNewRecord(locale, initalRecords[locale] as TranslationsObject);
+        });
     }
 
     public appendOrWrite = (localeKey: string, record: TranslationsObject): void => {

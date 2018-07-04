@@ -5,6 +5,26 @@ import { Storage } from "../../../src";
 describe("Storage()", () => {
     const storage = new Storage();
 
+    it("Shoudl set initail locale and record if it passed to consturctor props", () => {
+        const initializedStorage = new Storage("ru", {
+            "en": {
+                testCategory: {
+                    record: "valueEN"
+                }
+            },
+            "ua": {
+                testCategory: {
+                    record: "valueUA"
+                }
+            }
+        });
+
+        expect(initializedStorage.currentLocale).to.equals("ru");
+
+        expect(initializedStorage.readRecord("en", "testCategory", "record")).to.equals("valueEN");
+        expect(initializedStorage.readRecord("ua", "testCategory", "record")).to.equals("valueUA");
+    })
+
     it("Should set new record", () => {
         storage.writeNewRecord("ru", {
             category: {
@@ -57,7 +77,7 @@ describe("Storage()", () => {
         ).to.throw('Record "value" does not exist in storage');
     });
 
-    it ("Should throw error on append to exist record if passed locale does not exist", () => {
+    it("Should throw error on append to exist record if passed locale does not exist", () => {
         expect(() =>
             storage.appendToExistRecord("locale", {})
         ).to.throw('Locale "locale" does not exist in storage');
