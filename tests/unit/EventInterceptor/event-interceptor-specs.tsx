@@ -44,7 +44,7 @@ describe("<LocaleInterceptor/>", () => {
                     <div />
                 </EventInterceptor>
             </LocaleProvider>
-        )).to.throw("Event 'invalid' does not suppor's");
+        )).to.throw("Event 'invalid' does not support's");
     });
 
 })

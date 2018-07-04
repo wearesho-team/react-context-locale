@@ -42,18 +42,14 @@ describe("<LocaleProvider/>", () => {
     afterEach(() => wrapper.unmount());
 
     it("Should register translations", () => {
-        expect(JSON.stringify(wrapper.instance().state.translations.get("en")))
-            .to.equals(JSON.stringify({ ...commonTranslations.en, mainPage: mainPageTranslations.en }));
-
-        const newCategory = { en: { testTranslation: "test translation" } };
+        const newCategory = { en: { "Еще один перевод": "Another one translation" } };
 
         (wrapper.instance() as any).getChildContext().registerCategory("newCategory", newCategory);
-        expect(JSON.stringify(wrapper.instance().state.translations.get("en")))
-            .to.equals(JSON.stringify({
-                ...commonTranslations.en,
-                mainPage: mainPageTranslations.en,
-                newCategory: newCategory.en
-            }));
+        (wrapper.instance() as any).getChildContext().setLocale("en");
+
+        expect(
+            (wrapper.instance() as any).getChildContext().translate("newCategory", "Еще один перевод")
+        ).to.equals("Another one translation");
     });
 
     it("Should not translate text, when baseLocale equals initialLocale", () => {
@@ -107,7 +103,7 @@ describe("<LocaleProvider/>", () => {
             </LocaleProvider>
         );
 
-        expect(wrapper.getDOMNode().innerHTML).to.equals("Missing translation en:mainPage:text");
+        expect(wrapper.getDOMNode().innerHTML).to.equals('Record "text" does not exist in storage');
     });
 
     it("Should convert plural values to correct strings", () => {
@@ -144,7 +140,7 @@ describe("<LocaleProvider/>", () => {
             </LocaleProvider>
         );
 
-        expect(wrapper.getDOMNode().innerHTML).to.equals("Missing translation en:empty:text");
+        expect(wrapper.getDOMNode().innerHTML).to.equals('Record "text" does not exist in storage');
     });
 
     it("Should call `onLocaleChanged` callback if it passed to props on locale changed", () => {

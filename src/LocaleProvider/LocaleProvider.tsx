@@ -6,9 +6,10 @@ import {
     LocaleProviderContextTypes,
     LocaleProviderContext,
     EventListenerCallback,
-    TranslationsObject,
     LocaleEvents
 } from "./LocaleProviderContext";
+
+import { TranslationsObject, Storage } from "../Storage";
 
 export interface LocaleProviderProps {
     onMissingTranslation?: (params: { currentLocale: string; category: string, value: string }) => string;
@@ -18,11 +19,13 @@ export interface LocaleProviderProps {
     availableLocales: Array<string>;
     defaultLocale?: string;
     baseLocale: string;
+    storage?: Storage;
 }
 
 export const LocaleProviderPropTypes: {[P in keyof LocaleProviderProps]: PropTypes.Validator<any>} = {
     availableLocales: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
     baseLocale: PropTypes.string.isRequired,
+    storage: PropTypes.instanceOf(Storage),
     onMissingTranslation: PropTypes.func,
     commonTranslations: PropTypes.object,
     onSameTranslation: PropTypes.func,
@@ -31,7 +34,6 @@ export const LocaleProviderPropTypes: {[P in keyof LocaleProviderProps]: PropTyp
 };
 
 export interface LocaleProviderState {
-    translations: Map<string, TranslationsObject>;
     currentLocale: string;
 }
 
@@ -40,6 +42,8 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
     public static readonly propTypes = LocaleProviderPropTypes;
 
     private RegParser = new RegParser();
+    private Storage = this.props.storage || new Storage();
+
     private listeners: {[P in keyof LocaleEvents]: Set<LocaleEvents[keyof LocaleEvents]> } = {
         register: new Set(),
         change: new Set()
@@ -48,14 +52,14 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
     constructor(props) {
         super(props);
 
-        const translations = new Map();
         this.props.commonTranslations && Object.keys(this.props.commonTranslations).forEach((localeKey) => {
-            translations.set(localeKey, this.props.commonTranslations[localeKey]);
+            this.Storage.writeNewRecord(localeKey, this.props.commonTranslations[localeKey] as TranslationsObject);
         });
 
+        this.Storage.currentLocale = this.props.defaultLocale || this.props.baseLocale;
+
         this.state = {
-            currentLocale: this.props.defaultLocale || this.props.baseLocale,
-            translations
+            currentLocale: this.Storage.currentLocale
         };
     }
 
@@ -79,7 +83,7 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
 
     protected addEventListener = (event: keyof LocaleEvents, callback: EventListenerCallback<any>): void | never => {
         if (!Object.keys(this.listeners).includes(event)) {
-            throw new Error(`Event '${event}' does not suppor's`);
+            throw new Error(`Event '${event}' does not support's`);
         }
 
         this.listeners[event].add(callback);
@@ -91,6 +95,7 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
 
     protected setLocale = (nextLocale: string): void => {
         const oldLocale = this.state.currentLocale;
+        this.Storage.currentLocale = nextLocale;
         this.setState({ currentLocale: nextLocale }, () => {
             this.props.onLocaleChanged && this.props.onLocaleChanged(this.state.currentLocale);
             this.listeners.change.forEach((callback: LocaleEvents["change"]) => callback({
@@ -109,16 +114,13 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
 
         let translation;
         try {
-            translation = this.state.translations.get(this.state.currentLocale)[category][value];
-            if (!translation) {
-                throw new Error();
-            }
+            translation = this.Storage.readRecord(this.state.currentLocale, category, value);
         } catch (error) {
             if (this.props.onMissingTranslation) {
                 return this.props.onMissingTranslation({ value, category, currentLocale: this.state.currentLocale });
             }
 
-            translation = `Missing translation ${this.state.currentLocale}:${category}:${value}`;
+            return error.message;
         }
 
         if (this.props.onSameTranslation && translation === value) {
@@ -132,18 +134,8 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
 
     protected registerCategory = (categoryName: string, translations: TranslationsObject): void => {
         Object.keys(translations).forEach((localeKey) => {
-            if (!this.state.translations.get(localeKey)) {
-                // register new locale
-                return this.state.translations.set(localeKey, { [categoryName]: translations[localeKey] });
-            }
-
-            // register new category
-            this.state.translations.set(localeKey, {
-                ...this.state.translations.get(localeKey),
-                [categoryName]: translations[localeKey]
-            });
+            this.Storage.appendOrWrite(localeKey, { [categoryName]: translations[localeKey] });
         });
-        this.forceUpdate();
 
         this.listeners.register.forEach((callback: LocaleEvents["register"]) => callback(categoryName));
     }
