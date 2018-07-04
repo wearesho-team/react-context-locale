@@ -7,12 +7,12 @@ export class Storage {
 
     private storage: Map<string, TranslationsObject>;
 
-    constructor(initalLocale?: string, initalRecords?: TranslationsObject) {
+    constructor(initalParms: { initalLocale?: string, initalRecords?: TranslationsObject } = {}) {
         this.storage = new Map();
 
-        this.currentLocale = initalLocale;
-        initalRecords && Object.keys(initalRecords).forEach((locale) => {
-            this.writeNewRecord(locale, initalRecords[locale] as TranslationsObject);
+        this.currentLocale = initalParms.initalLocale;
+        initalParms.initalRecords && Object.keys(initalParms.initalRecords).forEach((locale) => {
+            this.writeNewRecord(locale, initalParms.initalRecords[locale] as TranslationsObject);
         });
     }
 

@@ -6,15 +6,18 @@ describe("Storage()", () => {
     const storage = new Storage();
 
     it("Shoudl set initail locale and record if it passed to consturctor props", () => {
-        const initializedStorage = new Storage("ru", {
-            "en": {
-                testCategory: {
-                    record: "valueEN"
-                }
-            },
-            "ua": {
-                testCategory: {
-                    record: "valueUA"
+        const initializedStorage = new Storage({
+            initalLocale: "ru",
+            initalRecords: {
+                "en": {
+                    testCategory: {
+                        record: "valueEN"
+                    }
+                },
+                "ua": {
+                    testCategory: {
+                        record: "valueUA"
+                    }
                 }
             }
         });
