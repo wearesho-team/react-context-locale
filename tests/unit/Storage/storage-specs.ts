@@ -9,12 +9,12 @@ describe("Storage()", () => {
         const initializedStorage = new Storage({
             initalLocale: "ru",
             initalRecords: {
-                "en": {
+                en: {
                     testCategory: {
                         record: "valueEN"
                     }
                 },
-                "ua": {
+                ua: {
                     testCategory: {
                         record: "valueUA"
                     }
