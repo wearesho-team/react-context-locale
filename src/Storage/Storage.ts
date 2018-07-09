@@ -22,6 +22,11 @@ export class Storage {
             : this.writeNewRecord(localeKey, record);
     }
 
+    public hasRecord = (locale: string, record: TranslationsObject): boolean => {
+        return this.storage.has(locale)
+            && (JSON.stringify(this.storage.get(locale)).includes(JSON.stringify(record).slice(1, -1)));
+    }
+
     public readRecord = (locale: string, category: string, record: string): string | never => {
         if (!this.storage.has(locale)) {
             throw new Error(`Locale "${locale}" does not exist in storage`);
@@ -38,7 +43,11 @@ export class Storage {
         return this.storage.get(locale)[category][record];
     }
 
-    public writeNewRecord = (locale: string, record: TranslationsObject): void => {
+    public writeNewRecord = (locale: string, record: TranslationsObject): void | string => {
+        if (this.hasRecord(locale, record)) {
+            throw new Error(`Record "${JSON.stringify(record)}" for locale "${locale}" already exist in storage`);
+        }
+
         this.storage.set(locale, record);
     }
 

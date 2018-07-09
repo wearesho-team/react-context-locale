@@ -278,7 +278,16 @@ const t = StorageTranslator(storage, "ru");
 You can initialize storage object by yourself, but highly recommended use instantiated object:
 
 ```tsx
-const controlledStorage = new Storage();
+const controlledStorage = new Storage({
+    initialLocale: "ru",
+    initialRecords: {   
+        "en": {
+            "errors": {
+                "Неверный формат": "Wrong format"
+            }
+        }
+    }
+});
 // ...
 <LocaleProvider storage={controlledStorage} {...LocaleProviderProps}>
     // ...
@@ -286,6 +295,12 @@ const controlledStorage = new Storage();
 // ...
 const t = StorageTranslator(controlledStorage, "ru");
 ```
+
+where
+- `initialLocale` is the same as `defaultLocale` prop for `LocaleProvider`.
+- `initialRecords` is the same as `commonTranslations` prop for `LocaleProvider`.
+
+So if you pass initial params to `Storage`, you dont need to pass according props to `LocaleProvider`.
 
 ##### LangLink
 

@@ -53,10 +53,14 @@ export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleP
         super(props);
 
         this.props.commonTranslations && Object.keys(this.props.commonTranslations).forEach((localeKey) => {
-            this.Storage.writeNewRecord(localeKey, this.props.commonTranslations[localeKey] as TranslationsObject);
+            if (!this.Storage.hasRecord(localeKey, this.props.commonTranslations[localeKey] as TranslationsObject)) {
+                this.Storage.writeNewRecord(localeKey, this.props.commonTranslations[localeKey] as TranslationsObject);
+            }
         });
 
-        this.Storage.currentLocale = this.props.defaultLocale || this.props.baseLocale;
+        if (!this.Storage.currentLocale) {
+            this.Storage.currentLocale = this.props.defaultLocale || this.props.baseLocale;
+        }
 
         this.state = {
             currentLocale: this.Storage.currentLocale

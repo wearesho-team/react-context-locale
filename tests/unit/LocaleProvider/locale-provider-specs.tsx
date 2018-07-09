@@ -2,7 +2,7 @@ import { expect } from "chai";
 import * as React from "react";
 import { ReactWrapper, mount } from "enzyme";
 
-import { LocaleProvider, t, Translator, RegisterCategory } from "../../../src";
+import { LocaleProvider, t, Translator, RegisterCategory, Storage } from "../../../src";
 
 describe("<LocaleProvider/>", () => {
     let wrapper: ReactWrapper<{}, any>;
@@ -40,6 +40,33 @@ describe("<LocaleProvider/>", () => {
     });
 
     afterEach(() => wrapper.unmount());
+
+    it("Should register initial translation on mount if it does not exist in storage", () => {
+        (wrapper.instance() as any).getChildContext().setLocale("en");
+
+        expect(
+            (wrapper.instance() as any).getChildContext().translate("errors", "format")
+        ).to.equals("wrong format");
+
+        wrapper.unmount();
+
+        wrapper = mount(
+            <LocaleProvider
+                commonTranslations={commonTranslations}
+                storage={new Storage({ initalLocale: "en", initalRecords: commonTranslations })}
+                availableLocales={["ru", "en", "gb"]}
+                baseLocale="ru"
+            >
+                <RegisterCategory categoryName="mainPage" translations={mainPageTranslations}>
+                    <span>{t("Тестовый перевод")}</span>
+                </RegisterCategory>
+            </LocaleProvider>
+        );
+
+        expect(
+            (wrapper.instance() as any).getChildContext().translate("errors", "format")
+        ).to.equals("wrong format");
+    });
 
     it("Should register translations", () => {
         const newCategory = { en: { "Еще один перевод": "Another one translation" } };

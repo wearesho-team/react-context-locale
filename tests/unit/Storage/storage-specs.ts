@@ -85,4 +85,15 @@ describe("Storage()", () => {
             storage.appendToExistRecord("locale", {})
         ).to.throw('Locale "locale" does not exist in storage');
     });
+
+    it("Should throw error on writing new record if it already exist in storage", () => {
+        const existRecord = {
+            category: {
+                record: "value"
+            }
+        };
+        expect(
+            () => storage.writeNewRecord("ru", existRecord)
+        ).to.throw(`Record "${JSON.stringify(existRecord)}" for locale "ru" already exist in storage`);
+    });
 });
