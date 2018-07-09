@@ -1,6 +1,6 @@
 {
   "name": "react-context-locale",
-  "version": "1.2.0-beta3",
+  "version": "1.2.0-beta4",
   "description": "Localize app with react-context-locale",
   "main": "build/index.js",
   "typings": "build/src/index.d.ts",
