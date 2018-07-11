@@ -1,8 +1,8 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 
-import { TranslationsObject } from "../LocaleProvider";
 import { LocaleProviderContextTypes, LocaleProviderContext } from "../LocaleProvider/LocaleProviderContext";
+import { TranslationsObject } from "../Storage";
 
 export interface RegisterCategoryProps {
     translations: TranslationsObject;

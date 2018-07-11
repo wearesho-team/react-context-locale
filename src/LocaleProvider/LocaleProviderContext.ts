@@ -1,10 +1,7 @@
 import * as PropTypes from "prop-types";
 
 import { Params } from "../RegParser";
-
-export interface TranslationsObject {
-    [key: string]: string | TranslationsObject
-};
+import { TranslationsObject } from "../Storage";
 
 export interface LocaleEvents {
     change: EventListenerCallback<{ oldLocale: string; newLocale: string }>;

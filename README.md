@@ -28,6 +28,7 @@ You must provide locale setting and controls with `LocaleProvider`:
     onLocaleChanged={(currentLocale) => console.log(`Locale changed to ${currentLocale}`)}
     availableLocales={["ru", "en", "gb"]}
     commonTranslations={Translations}
+    storage={new Storage()}
     defaultLocale="en"
     baseLocale="ru"
 >
@@ -42,7 +43,10 @@ where
  - `onLocaleChanged` - will called, when locale was changed. Optional.
  - `onSameTranslation` - will called, when translated string is same as key. Optional.
  - `defaultLocale` - locale, that will be used on did mount. Optional. Default is same as `baseLocale`.
+ - `storage` - object, that implements translations storage. Optional. If not passed, will be created automatically.
  - `onMissingTranslation` - will called, when translation key does not found in storage. Optional. If not passed, string with error description will be returned.
+
+*Note: Pass `storage` prop, only if you need to access it from outside, in other cases it does not needed*
 
 Translations object example:
 
@@ -259,6 +263,44 @@ where
 - `removeEventListener` - method for removing locale event listeners.
 
 #### Helpers
+
+##### StorageTranslator
+
+If you need translate string outside layout (for example in bootstrap file) or if you need raw string instead of `Translator` component, use `StorageTranslator` helper:
+
+```tsx
+// pass base locale by second argument
+const t = StorageTranslator(storage, "ru");
+
+<meta content={t("Current year: [year]", "Meta", { year: (new Date()).getFullYear() })}/>
+```
+
+You can initialize storage object by yourself, but highly recommended use instantiated object:
+
+```tsx
+const controlledStorage = new Storage({
+    initialLocale: "ru",
+    initialRecords: {   
+        "en": {
+            "errors": {
+                "Неверный формат": "Wrong format"
+            }
+        }
+    }
+});
+// ...
+<LocaleProvider storage={controlledStorage} {...LocaleProviderProps}>
+    // ...
+</LocaleProvider>
+// ...
+const t = StorageTranslator(controlledStorage, "ru");
+```
+
+where
+- `initialLocale` is the same as `defaultLocale` prop for `LocaleProvider`.
+- `initialRecords` is the same as `commonTranslations` prop for `LocaleProvider`.
+
+So if you pass initial params to `Storage`, you dont need to pass according props to `LocaleProvider`.
 
 ##### LangLink
 

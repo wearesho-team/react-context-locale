@@ -44,11 +44,6 @@ export class Translator extends React.Component<TranslatorProps> {
     }
 }
 
-export function t(
-    value: string,
-    category?: string,
-    params?: Params,
-    render?: (translation: string) => React.ReactNode
-): React.ReactNode {
+export function t(value: string, category?: string, params?: Params): React.ReactNode {
     return <Translator category={category} params={params}>{value}</Translator>;
 }

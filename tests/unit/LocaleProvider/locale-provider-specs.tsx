@@ -2,7 +2,7 @@ import { expect } from "chai";
 import * as React from "react";
 import { ReactWrapper, mount } from "enzyme";
 
-import { LocaleProvider, t, Translator, RegisterCategory } from "../../../src";
+import { LocaleProvider, t, Translator, RegisterCategory, Storage } from "../../../src";
 
 describe("<LocaleProvider/>", () => {
     let wrapper: ReactWrapper<{}, any>;
@@ -41,19 +41,42 @@ describe("<LocaleProvider/>", () => {
 
     afterEach(() => wrapper.unmount());
 
-    it("Should register translations", () => {
-        expect(JSON.stringify(wrapper.instance().state.translations.get("en")))
-            .to.equals(JSON.stringify({ ...commonTranslations.en, mainPage: mainPageTranslations.en }));
+    it("Should register initial translation on mount if it does not exist in storage", () => {
+        (wrapper.instance() as any).getChildContext().setLocale("en");
 
-        const newCategory = { en: { testTranslation: "test translation" } };
+        expect(
+            (wrapper.instance() as any).getChildContext().translate("errors", "format")
+        ).to.equals("wrong format");
+
+        wrapper.unmount();
+
+        wrapper = mount(
+            <LocaleProvider
+                commonTranslations={commonTranslations}
+                storage={new Storage({ initalLocale: "en", initalRecords: commonTranslations })}
+                availableLocales={["ru", "en", "gb"]}
+                baseLocale="ru"
+            >
+                <RegisterCategory categoryName="mainPage" translations={mainPageTranslations}>
+                    <span>{t("Тестовый перевод")}</span>
+                </RegisterCategory>
+            </LocaleProvider>
+        );
+
+        expect(
+            (wrapper.instance() as any).getChildContext().translate("errors", "format")
+        ).to.equals("wrong format");
+    });
+
+    it("Should register translations", () => {
+        const newCategory = { en: { "Еще один перевод": "Another one translation" } };
 
         (wrapper.instance() as any).getChildContext().registerCategory("newCategory", newCategory);
-        expect(JSON.stringify(wrapper.instance().state.translations.get("en")))
-            .to.equals(JSON.stringify({
-                ...commonTranslations.en,
-                mainPage: mainPageTranslations.en,
-                newCategory: newCategory.en
-            }));
+        (wrapper.instance() as any).getChildContext().setLocale("en");
+
+        expect(
+            (wrapper.instance() as any).getChildContext().translate("newCategory", "Еще один перевод")
+        ).to.equals("Another one translation");
     });
 
     it("Should not translate text, when baseLocale equals initialLocale", () => {
@@ -107,7 +130,7 @@ describe("<LocaleProvider/>", () => {
             </LocaleProvider>
         );
 
-        expect(wrapper.getDOMNode().innerHTML).to.equals("Missing translation en:mainPage:text");
+        expect(wrapper.getDOMNode().innerHTML).to.equals('Record "text" does not exist in storage');
     });
 
     it("Should convert plural values to correct strings", () => {
@@ -144,7 +167,7 @@ describe("<LocaleProvider/>", () => {
             </LocaleProvider>
         );
 
-        expect(wrapper.getDOMNode().innerHTML).to.equals("Missing translation en:empty:text");
+        expect(wrapper.getDOMNode().innerHTML).to.equals('Record "text" does not exist in storage');
     });
 
     it("Should call `onLocaleChanged` callback if it passed to props on locale changed", () => {
