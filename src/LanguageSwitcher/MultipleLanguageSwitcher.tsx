@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as PropTypes from "prop-types";
 
-import { LocaleProviderContext, LocaleProviderContextTypes } from "../LocaleProvider/LocaleProviderContext";
+import { LocaleProviderContext, LocaleProviderContextTypes } from "../LocaleProvider";
 
 export interface MultipleLanguageSwitcherProps extends React.HTMLProps<HTMLButtonElement> {
     render?: (label: string, locale: string) => React.ReactNode;
