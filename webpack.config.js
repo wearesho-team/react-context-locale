@@ -21,7 +21,7 @@ const config = {
             filename: 'index.js',
             path: path.resolve('./build'),
             publicPath: "/",
-            library: "react-criteria-table",
+            library: "@sho-js/react-context-locale",
             libraryTarget: "umd",
         },
 
