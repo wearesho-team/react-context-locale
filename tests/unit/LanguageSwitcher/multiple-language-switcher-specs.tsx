@@ -12,6 +12,7 @@ describe("<MultipleLanguageSwitcher/>", () => {
     let setLocaleTriggered = false;
 
     const commonHandler = () => undefined;
+    const availableLocales = [ "ru", "en", "gb" ];
 
     const context: LocaleProviderContext = {
         addEventListener: commonHandler,
@@ -22,7 +23,7 @@ describe("<MultipleLanguageSwitcher/>", () => {
             setLocaleTriggered = true;
             context.currentLocale = nextLocale;
         },
-        availableLocales: ["ru", "en", "gb"],
+        availableLocales,
         currentLocale: "ru",
         baseLocale: "ru"
     };
@@ -30,7 +31,7 @@ describe("<MultipleLanguageSwitcher/>", () => {
     beforeEach(() => {
         commonHandler();
         wrapper = mount(
-            <MultipleLanguageSwitcher />,
+            <MultipleLanguageSwitcher/>,
             { context }
         );
     });
@@ -53,7 +54,7 @@ describe("<MultipleLanguageSwitcher/>", () => {
     });
 
     it("Should set active class name to button with active locale", () => {
-        expect(context.currentLocale).to.equals(context.availableLocales[0]);
+        expect(context.currentLocale).to.equals(context.availableLocales[ 0 ]);
 
         expect(wrapper.find("button").first().getDOMNode().className)
             .to.equals(MultipleLanguageSwitcher.defaultProps.activeClassName);
@@ -76,21 +77,32 @@ describe("<MultipleLanguageSwitcher/>", () => {
         expect(onClickTriggered).to.be.true;
     });
 
-    it("Should paste label if if passed to 'localeLabels' prop according to current locale", () => {
+    it("Should paste label passed to 'localeLabels' prop according to current locale", () => {
+        const localeLabels = {
+            ru: "RUS",
+            en: "ENG",
+            gb: "GER"
+        };
         wrapper.setProps({
-            localeLabels: {
-                ru: "RUS",
-                en: "ENG",
-                gb: "GER"
-            }
+            localeLabels,
         });
 
-        expect(wrapper.getDOMNode().innerHTML).to.contains("RUS");
+        Object.values(localeLabels).forEach(
+            (label, i) => expect(
+                wrapper.find("button").at(i).getDOMNode().innerHTML
+            ).to.equal(label)
+        );
     });
 
     it("Should return 'render' prop result on render if it passed", () => {
-        wrapper.setProps({ render: (label) => "test" });
+        const render = (locale) => `test.${locale}`;
+        wrapper.setProps({ render });
+        wrapper.mount();
 
-        expect(wrapper.getDOMNode().innerHTML).to.contains("test");
+        availableLocales.forEach(
+            (locale, i) => expect(
+                wrapper.find("button").at(i).getDOMNode().innerHTML
+            ).to.equal(render(locale))
+        );
     });
-})
+});
