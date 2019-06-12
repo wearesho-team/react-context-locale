@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as PropTypes from "prop-types";
 
 import { LocaleProviderContextTypes, LocaleProviderContext } from "../LocaleProvider/LocaleProviderContext";
 import { TranslationsObject } from "../Storage";
@@ -9,23 +8,15 @@ export interface RegisterCategoryProps {
     categoryName: string;
 }
 
-export const RegisterCategoryPropTypes: {[P in keyof RegisterCategoryProps]: PropTypes.Validator<any>} = {
-    translations: PropTypes.object.isRequired,
-    categoryName: PropTypes.string.isRequired
-};
-
 export interface RegisterCategoryContext {
     category?: string;
 }
 
-export const RegisterCategoryContextTypes: {[P in keyof RegisterCategoryContext]: PropTypes.Validator<any>} = {
-    category: PropTypes.string
-};
+export const RegisterCategoryContextTypes = {}
 
 export class RegisterCategory extends React.Component<RegisterCategoryProps> {
     public static readonly childContextTypes = RegisterCategoryContextTypes;
     public static readonly contextTypes = LocaleProviderContextTypes;
-    public static readonly propTypes = RegisterCategoryPropTypes;
 
     public readonly context: LocaleProviderContext;
 

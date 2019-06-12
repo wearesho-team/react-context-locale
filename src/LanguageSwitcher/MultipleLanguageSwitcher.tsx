@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as PropTypes from "prop-types";
 
 import { LocaleProviderContext, LocaleProviderContextTypes } from "../LocaleProvider";
 
@@ -9,13 +8,6 @@ export interface MultipleLanguageSwitcherProps extends React.HTMLProps<HTMLButto
     activeClassName?: string;
 }
 
-export const MultipleLanguageSwitcherPropTypes:
-    {[P in keyof MultipleLanguageSwitcherProps]: PropTypes.Validator<any>} = {
-        activeClassName: PropTypes.string,
-        localeLabels: PropTypes.object,
-        render: PropTypes.func
-    };
-
 export const MultipleLanguageSwitcherDefaultProps:
     {[P in keyof MultipleLanguageSwitcherProps]?: MultipleLanguageSwitcherProps[P]} = {
         activeClassName: "active"
@@ -23,7 +15,6 @@ export const MultipleLanguageSwitcherDefaultProps:
 
 export class MultipleLanguageSwitcher extends React.Component<MultipleLanguageSwitcherProps> {
     public static readonly defaultProps = MultipleLanguageSwitcherDefaultProps;
-    public static readonly propTypes = MultipleLanguageSwitcherPropTypes;
     public static readonly contextTypes = LocaleProviderContextTypes;
 
     public readonly context: LocaleProviderContext;

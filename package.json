@@ -33,7 +33,6 @@
     "@types/enzyme": "^2.8.6",
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.47",
-    "@types/prop-types": "^15.7.1",
     "@types/react": "^16.8.19",
     "@types/react-dom": "^16.8.4",
     "@types/sinon": "^2.3.3",
@@ -55,7 +54,6 @@
     "mocha": "^6.1.4",
     "nyc": "^14.1.1",
     "pre-commit": "^1.2.2",
-    "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-test-renderer": "^16.8.6",
@@ -70,9 +68,7 @@
     "webpack-node-externals": "^1.6.0"
   },
   "peerDependencies": {
-    "react": "^16.2.0",
-    "prop-types": "^15.6.0",
-    "react-router-dom": "^4.3.1"
+    "react": "^16.2.0"
   },
   "nyc": {
     "extension": [

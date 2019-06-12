@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as PropTypes from "prop-types";
 
 import {
     LocaleProviderContextTypes,
@@ -12,14 +11,8 @@ export interface EventInterceptorProps {
     event: keyof LocaleEvents;
 }
 
-export const LocaleInterceptorPropTypes: {[P in keyof EventInterceptorProps]: PropTypes.Validator<any>} = {
-    event: PropTypes.string.isRequired,
-    onEvent: PropTypes.func.isRequired
-};
-
 export class EventInterceptor extends React.Component<EventInterceptorProps> {
     public static readonly contextTypes = LocaleProviderContextTypes;
-    public static readonly propTypes = LocaleInterceptorPropTypes;
 
     public readonly context: LocaleProviderContext;
 

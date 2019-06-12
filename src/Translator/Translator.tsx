@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as PropTypes from "prop-types";
 
 import { LocaleProviderContextTypes, LocaleProviderContext } from "../LocaleProvider/LocaleProviderContext";
 import { RegisterCategoryContextTypes, RegisterCategoryContext } from "../RegisterCategory";
@@ -12,18 +11,11 @@ export interface TranslatorProps {
     params?: Params;
 }
 
-export const TranslatorPropTypes: {[P in keyof TranslatorProps]: PropTypes.Validator<any>} = {
-    children: PropTypes.string.isRequired,
-    category: PropTypes.string,
-    render: PropTypes.func
-};
-
 export class Translator extends React.Component<TranslatorProps> {
     public static readonly contextTypes = {
         ...LocaleProviderContextTypes,
         ...RegisterCategoryContextTypes
     };
-    public static readonly propTypes = TranslatorPropTypes;
 
     public readonly context: LocaleProviderContext & RegisterCategoryContext;
 

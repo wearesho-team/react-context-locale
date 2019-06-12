@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as PropTypes from "prop-types";
 
 import { LocaleProviderContextTypes, LocaleProviderContext } from "../LocaleProvider/LocaleProviderContext";
 
@@ -8,13 +7,7 @@ export interface SingleLanguageSwitcherProps extends React.HTMLProps<HTMLButtonE
     localeLabels?: { [key: string]: string };
 }
 
-export const SingleLanguageSwitcherPropTypes: {[P in keyof SingleLanguageSwitcherProps]: PropTypes.Validator<any>} = {
-    localeLabels: PropTypes.object,
-    render: PropTypes.func
-};
-
 export class SingleLanguageSwitcher extends React.Component<SingleLanguageSwitcherProps> {
-    public static readonly propTypes = SingleLanguageSwitcherPropTypes;
     public static readonly contextTypes = LocaleProviderContextTypes;
 
     public readonly context: LocaleProviderContext;
