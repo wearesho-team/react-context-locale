@@ -84,7 +84,7 @@ In storage it will be:
 {
     "en": {
         "testCategory": {
-            "Тест:" "Test"
+            "Тест": "Test"
         }
     }
 }
