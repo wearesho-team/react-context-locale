@@ -1,6 +1,6 @@
 {
   "name": "@sho-js/react-context-locale",
-  "version": "1.3.1",
+  "version": "2.0.0-beta.0",
   "description": "Localize app with react-context-locale",
   "main": "dist/react-context-locale.cjs.js",
   "module": "dist/react-context-locale.esm.js",
