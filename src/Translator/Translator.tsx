@@ -31,3 +31,7 @@ export const Translator: React.FC<TranslatorProps> = (props: TranslatorProps) =>
 };
 
 Translator.displayName = "Translator";
+
+export function t(value: string, category?: string, params?: SubstituteParams): React.ReactNode {
+    return <Translator category={category} params={params}>{value}</Translator>;
+}
