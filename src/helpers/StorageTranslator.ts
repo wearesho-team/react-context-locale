@@ -1,13 +1,11 @@
 import { Storage } from "../Storage";
-import { Params, RegParser } from "../RegParser";
+import substitute, { SubstituteParams } from "./substitude";
 
 export const StorageTranslator = (storage: Storage, baseLocale: string) => {
-    const Parser = new RegParser();
-
-    return (value: string, category: string, params?: Params): string => {
+    return (value: string, category: string, params?: SubstituteParams): string => {
         if (storage.currentLocale === baseLocale) {
             return params
-                ? Parser.substitute(value, params)
+                ? substitute(value, params)
                 : value;
         }
 
@@ -19,7 +17,7 @@ export const StorageTranslator = (storage: Storage, baseLocale: string) => {
         }
 
         return params
-            ? Parser.substitute(translation, params)
+            ? substitute(translation, params)
             : translation;
     }
-}
+};

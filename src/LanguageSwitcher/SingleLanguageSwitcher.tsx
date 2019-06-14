@@ -1,45 +1,30 @@
 import * as React from "react";
 
-import { LocaleProviderContextTypes, LocaleProviderContext } from "../LocaleProvider/LocaleProviderContext";
+import { LocaleProviderContext } from "../LocaleProvider";
 
 export interface SingleLanguageSwitcherProps extends React.HTMLProps<HTMLButtonElement> {
     render?: (label: string, locale: string) => React.ReactNode;
     localeLabels?: { [key: string]: string };
 }
 
-export class SingleLanguageSwitcher extends React.Component<SingleLanguageSwitcherProps> {
-    public static readonly contextTypes = LocaleProviderContextTypes;
+const getNextLocale = (current: string, available: Array<string>): string => {
+    return available.find((_, i) => available[i - 1] === current)
+        || available[0];
+};
 
-    public readonly context: LocaleProviderContext;
+export const SingleLanguageSwitcher: React.FC<SingleLanguageSwitcherProps> = (props) => {
+    const { render, onClick, type, localeLabels, ...buttonProps } = props;
+    const context = React.useContext(LocaleProviderContext);
+    const nextLocale = getNextLocale(context.currentLocale, context.availableLocales);
+    const handleClick = React.useCallback((e) => {
+        onClick && onClick(e);
+        context.setLocale(nextLocale);
+    }, [onClick, context.setLocale]);
 
-    public render(): React.ReactNode {
-        const { render, onClick, type, localeLabels, ...buttonProps } = this.props;
-
-        return (
-            <button type="button" onClick={this.handleClick} {...buttonProps}>
-                {render ? render(this.label, this.nextLocale) : this.label}
-            </button>
-        );
-    }
-
-    protected get label(): string {
-        return this.props.localeLabels ? this.props.localeLabels[this.nextLocale] : this.nextLocale;
-    }
-
-    protected handleClick = (event: React.MouseEvent<HTMLButtonElement>): void => {
-        this.props.onClick && this.props.onClick(event);
-
-        this.context.setLocale(this.nextLocale);
-    }
-
-    protected get nextLocale(): string {
-        const currentLocaleIndex = this.context.availableLocales
-            .findIndex((locale) => locale === this.context.currentLocale);
-
-        if (currentLocaleIndex === this.context.availableLocales.length - 1) {
-            return this.context.availableLocales[0];
-        } else {
-            return this.context.availableLocales[currentLocaleIndex + 1];
-        }
-    }
-}
+    const label = props.localeLabels ? props.localeLabels[ nextLocale ] : nextLocale;
+    return (
+        <button type="button" onClick={handleClick} {...buttonProps}>
+            {render ? render(label, nextLocale) : label}
+        </button>
+    );
+};

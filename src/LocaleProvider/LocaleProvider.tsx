@@ -1,146 +1,87 @@
 import * as React from "react";
-import * as PropTypes from "prop-types";
-
-import { RegParser, Params } from "../RegParser";
-import {
-    LocaleProviderContextTypes,
-    LocaleProviderContext,
-    EventListenerCallback,
-    LocaleEvents
-} from "./LocaleProviderContext";
 
 import { TranslationsObject, Storage } from "../Storage";
+import substitute, { SubstituteParams } from "../helpers/substitude";
+
+export interface LocaleProviderContextValue {
+    registerCategory: (categoryName: string, translations: { [ k: string ]: TranslationsObject }) => void;
+    translate: (category: string, value: string, params?: SubstituteParams) => string;
+    setLocale: (nextLocale: string) => void;
+    availableLocales: Array<string>;
+    currentLocale: string;
+    baseLocale: string;
+}
+
+export const LocaleProviderContextDefaultValue: LocaleProviderContextValue = {
+    registerCategory: () => undefined,
+    translate: () => undefined,
+    setLocale: () => undefined,
+    availableLocales: [],
+    currentLocale: "",
+    baseLocale: "",
+};
+
+export const LocaleProviderContext = React.createContext<LocaleProviderContextValue>(LocaleProviderContextDefaultValue);
 
 export interface LocaleProviderProps {
     onMissingTranslation?: (params: { currentLocale: string; category: string, value: string }) => string;
     onSameTranslation?: (params: { currentLocale: string; category: string, value: string }) => string;
     onLocaleChanged?: (currentLocale: string) => void;
-    commonTranslations?: TranslationsObject;
+    commonTranslations?: { [ k: string ]: TranslationsObject };
     availableLocales: Array<string>;
     defaultLocale?: string;
     baseLocale: string;
     storage?: Storage;
 }
 
-export const LocaleProviderPropTypes: {[P in keyof LocaleProviderProps]: PropTypes.Validator<any>} = {
-    availableLocales: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
-    baseLocale: PropTypes.string.isRequired,
-    storage: PropTypes.instanceOf(Storage),
-    onMissingTranslation: PropTypes.func,
-    commonTranslations: PropTypes.object,
-    onSameTranslation: PropTypes.func,
-    defaultLocale: PropTypes.string,
-    onLocaleChanged: PropTypes.func
-};
+export const LocaleProvider: React.FC<LocaleProviderProps> = (props) => {
+    const [ currentLocale, setLocale ] = React.useState(props.defaultLocale || props.baseLocale);
+    const storage = React.useMemo(() => props.storage || new Storage(), [ props.storage ]);
+    const registerCategory: LocaleProviderContextValue["registerCategory"] = React.useCallback(
+        (categoryName, translations) => {
+            Object.keys(translations)
+                .forEach((locale) => storage.appendOrWrite(categoryName, translations[ locale ]));
+        },
+        []
+    );
+    const translate: LocaleProviderContextValue["translate"] = React.useCallback((category, value, params) => {
+        if (currentLocale === props.baseLocale) {
+            return params ? substitute(value, params) : value;
+        }
+        let translation: string;
+        try {
+            translation = storage.readRecord(currentLocale, category, value);
+        } catch (error) {
+            return props.onMissingTranslation
+                ? props.onMissingTranslation({ value, category, currentLocale })
+                : error.message;
+        }
+        if (props.onSameTranslation && translation === value) {
+            return props.onSameTranslation({ value, category, currentLocale });
+        }
+        return params ? substitute(translation, params) : translation;
+    }, [ props.baseLocale, storage.readRecord, props.onMissingTranslation, props.onSameTranslation ]);
 
-export interface LocaleProviderState {
-    currentLocale: string;
-}
+    React.useEffect(() => {
+        Object.keys(props.commonTranslations)
+            .filter((locale) => storage.hasRecord(currentLocale, props.commonTranslations[ locale ]))
+            .forEach((locale) => storage.writeNewRecord(currentLocale, props.commonTranslations[ locale ]));
+    }, [ props.commonTranslations ]);
+    React.useEffect(() => {
+        storage.currentLocale = currentLocale;
+        props.onLocaleChanged && props.onLocaleChanged(currentLocale);
+    }, [ currentLocale ]);
 
-export class LocaleProvider extends React.Component<LocaleProviderProps, LocaleProviderState> {
-    public static readonly childContextTypes = LocaleProviderContextTypes;
-    public static readonly propTypes = LocaleProviderPropTypes;
-
-    private RegParser = new RegParser();
-    private Storage = this.props.storage || new Storage();
-
-    private listeners: {[P in keyof LocaleEvents]: Set<LocaleEvents[keyof LocaleEvents]> } = {
-        register: new Set(),
-        change: new Set()
+    const context: LocaleProviderContextValue = {
+        registerCategory,
+        setLocale,
+        currentLocale,
+        translate,
+        availableLocales: props.availableLocales,
+        baseLocale: props.baseLocale,
     };
 
-    constructor(props) {
-        super(props);
+    return <LocaleProviderContext.Provider value={context}>{props.children}</LocaleProviderContext.Provider>;
+};
 
-        this.props.commonTranslations && Object.keys(this.props.commonTranslations).forEach((localeKey) => {
-            if (!this.Storage.hasRecord(localeKey, this.props.commonTranslations[localeKey] as TranslationsObject)) {
-                this.Storage.writeNewRecord(localeKey, this.props.commonTranslations[localeKey] as TranslationsObject);
-            }
-        });
-
-        if (!this.Storage.currentLocale) {
-            this.Storage.currentLocale = this.props.defaultLocale || this.props.baseLocale;
-        }
-
-        this.state = {
-            currentLocale: this.Storage.currentLocale
-        };
-    }
-
-    public getChildContext(): LocaleProviderContext {
-        return {
-            availableLocales: this.props.availableLocales,
-            registerCategory: this.registerCategory,
-            currentLocale: this.state.currentLocale,
-            baseLocale: this.props.baseLocale,
-            translate: this.translate,
-            setLocale: this.setLocale,
-
-            addEventListener: this.addEventListener,
-            removeEventListener: this.removeEventListener
-        };
-    }
-
-    public render(): React.ReactNode {
-        return this.props.children;
-    }
-
-    protected addEventListener = (event: keyof LocaleEvents, callback: EventListenerCallback<any>): void | never => {
-        if (!Object.keys(this.listeners).includes(event)) {
-            throw new Error(`Event '${event}' does not support's`);
-        }
-
-        this.listeners[event].add(callback);
-    }
-
-    protected removeEventListener = (event: keyof LocaleEvents, callback: EventListenerCallback<any>): void => {
-        this.listeners[event].delete(callback);
-    }
-
-    protected setLocale = (nextLocale: string): void => {
-        const oldLocale = this.state.currentLocale;
-        this.Storage.currentLocale = nextLocale;
-        this.setState({ currentLocale: nextLocale }, () => {
-            this.props.onLocaleChanged && this.props.onLocaleChanged(this.state.currentLocale);
-            this.listeners.change.forEach((callback: LocaleEvents["change"]) => callback({
-                oldLocale,
-                newLocale: this.state.currentLocale
-            }));
-        });
-    }
-
-    protected translate = (category: string, value: string, params?: Params): string | never => {
-        if (this.state.currentLocale === this.props.baseLocale) {
-            return params
-                ? this.RegParser.substitute(value, params)
-                : value;
-        }
-
-        let translation;
-        try {
-            translation = this.Storage.readRecord(this.state.currentLocale, category, value);
-        } catch (error) {
-            if (this.props.onMissingTranslation) {
-                return this.props.onMissingTranslation({ value, category, currentLocale: this.state.currentLocale });
-            }
-
-            return error.message;
-        }
-
-        if (this.props.onSameTranslation && translation === value) {
-            return this.props.onSameTranslation({ value, category, currentLocale: this.state.currentLocale });
-        }
-
-        return params
-            ? this.RegParser.substitute(translation, params)
-            : translation;
-    }
-
-    protected registerCategory = (categoryName: string, translations: TranslationsObject): void => {
-        Object.keys(translations).forEach((localeKey) => {
-            this.Storage.appendOrWrite(localeKey, { [categoryName]: translations[localeKey] });
-        });
-
-        this.listeners.register.forEach((callback: LocaleEvents["register"]) => callback(categoryName));
-    }
-}
+LocaleProvider.displayName = "LocaleProvider";

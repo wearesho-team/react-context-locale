@@ -9,7 +9,6 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "declaration": true,
-    "declarationDir": "build",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },

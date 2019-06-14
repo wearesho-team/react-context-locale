@@ -2,8 +2,11 @@ import { expect } from "chai";
 import * as React from "react";
 import { ReactWrapper, mount } from "enzyme";
 
-import { SingleLanguageSwitcher } from "../../../src";
-import { LocaleProviderContext } from "../../../src/LocaleProvider/LocaleProviderContext";
+import {
+    SingleLanguageSwitcher,
+    LocaleProviderContextValue,
+    LocaleProviderContextDefaultValue
+} from "../../../src";
 
 describe("<SingleLanguageSwitcher/>", () => {
     let wrapper: ReactWrapper<{}, {}>;
@@ -13,11 +16,8 @@ describe("<SingleLanguageSwitcher/>", () => {
 
     const commonHandler = () => undefined;
 
-    const context: LocaleProviderContext = {
-        addEventListener: commonHandler,
-        removeEventListener: commonHandler,
-        registerCategory: commonHandler,
-        translate: commonHandler as any,
+    const context: LocaleProviderContextValue = {
+        ...LocaleProviderContextDefaultValue,
         setLocale: (nextLocale: string) => {
             setLocaleTriggered = true;
             context.currentLocale = nextLocale;
@@ -94,8 +94,8 @@ describe("<SingleLanguageSwitcher/>", () => {
     });
 
     it("Should return 'render' prop result on render if it passed", () => {
-        wrapper.setProps({ render: (label) => "test" });
+        wrapper.setProps({ render: () => "test" });
 
         expect(wrapper.getDOMNode().innerHTML).to.contains("test");
     });
-})
+});

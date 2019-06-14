@@ -1,16 +1,14 @@
 import * as React from "react";
-import { LocaleProviderContextTypes, LocaleProviderContext } from "../LocaleProvider/LocaleProviderContext";
+import { LocaleProviderContext } from "../LocaleProvider";
 
 export interface OnLocaleProps {
     locale: string;
 }
 
-export class OnLocale extends React.Component<OnLocaleProps> {
-    public static readonly contextTypes = LocaleProviderContextTypes;
+export const OnLocale: React.FC<OnLocaleProps> = ({ locale, children }) => (
+    <LocaleProviderContext.Consumer>
+        {(context) => context.currentLocale === locale ? children : null}
+    </LocaleProviderContext.Consumer>
+);
 
-    public readonly context: LocaleProviderContext;
-
-    public render(): React.ReactNode {
-        return this.context.currentLocale === this.props.locale ? this.props.children : null;
-    }
-}
+OnLocale.displayName = "OnLocale";

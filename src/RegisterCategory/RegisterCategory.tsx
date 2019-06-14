@@ -1,38 +1,39 @@
 import * as React from "react";
 
-import { LocaleProviderContextTypes, LocaleProviderContext } from "../LocaleProvider/LocaleProviderContext";
+import { LocaleProviderContext, LocaleProviderContextValue } from "../LocaleProvider";
 import { TranslationsObject } from "../Storage";
 
 export interface RegisterCategoryProps {
-    translations: TranslationsObject;
+    translations: { [ k: string ]: TranslationsObject };
     categoryName: string;
 }
 
-export interface RegisterCategoryContext {
-    category?: string;
+export interface RegisterCategoryContextValue {
+    category: string;
 }
 
-export const RegisterCategoryContextTypes = {}
+export const RegisterCategoryContextDefaultValue = {
+    category: "",
+};
 
-export class RegisterCategory extends React.Component<RegisterCategoryProps> {
-    public static readonly childContextTypes = RegisterCategoryContextTypes;
-    public static readonly contextTypes = LocaleProviderContextTypes;
+export const RegisterCategoryContext = React.createContext<RegisterCategoryContextValue>(
+    RegisterCategoryContextDefaultValue
+);
 
-    public readonly context: LocaleProviderContext;
+export class RegisterCategory extends React.PureComponent<RegisterCategoryProps> {
+    public static readonly contextType = LocaleProviderContext;
+    public readonly context: LocaleProviderContextValue;
 
-    constructor(props: RegisterCategoryProps, context: LocaleProviderContext) {
-        super(props, context);
-
-        context.registerCategory(props.categoryName, props.translations);
+    constructor(props) {
+        super(props);
+        this.context.registerCategory(this.props.categoryName, this.props.translations);
     }
 
-    public getChildContext(): RegisterCategoryContext {
-        return {
-            category: this.props.categoryName
-        }
-    }
-
-    public render(): React.ReactNode {
-        return this.props.children;
+    public render() {
+        return (
+            <RegisterCategoryContext.Provider value={{ category: this.props.categoryName }}>
+                {this.props.children}
+            </RegisterCategoryContext.Provider>
+        );
     }
 }

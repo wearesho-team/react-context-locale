@@ -2,8 +2,12 @@ import { expect } from "chai";
 import * as React from "react";
 import { ReactWrapper, mount } from "enzyme";
 
-import { OnLocale } from "../../../src";
-import { LocaleProviderContext } from "../../../src/LocaleProvider/LocaleProviderContext";
+import {
+    LocaleProviderContext,
+    LocaleProviderContextDefaultValue,
+    LocaleProviderContextValue,
+    OnLocale
+} from "../../../src";
 
 describe("<OnLocale/>", () => {
     let wrapper: ReactWrapper<{}, {}>;
@@ -11,27 +15,19 @@ describe("<OnLocale/>", () => {
     let setLocaleTriggered = false;
     const commonHandler = () => undefined;
 
-    const context: LocaleProviderContext = {
-        addEventListener: commonHandler,
-        removeEventListener: commonHandler,
-        registerCategory: commonHandler,
-        translate: commonHandler as any,
-        setLocale: (nextLocale: string) => {
-            setLocaleTriggered = true;
-            context.currentLocale = nextLocale;
-        },
-        availableLocales: ["ru", "en", "gb"],
+    const context: LocaleProviderContextValue = {
+        ...LocaleProviderContextDefaultValue,
         currentLocale: "ru",
-        baseLocale: "ru"
     };
 
     beforeEach(() => {
         commonHandler();
         wrapper = mount(
-            <OnLocale locale="ru">
-                <div />
-            </OnLocale>,
-            { context }
+            <LocaleProviderContext.Provider value={context}>
+                <OnLocale locale="ru">
+                    <div/>
+                </OnLocale>
+            </LocaleProviderContext.Provider>
         );
     });
 
@@ -42,10 +38,10 @@ describe("<OnLocale/>", () => {
 
     it("Should render children if current context locale equals props locale", () => {
         expect(wrapper.children().length).to.equals(1);
-
-        context.setLocale("en");
-        wrapper.setContext({ ...context });
-        expect(wrapper.children().length).to.equals(0);
     });
 
-})
+    it("Should not render children if current context locale not equal prop locale", () => {
+        context.setLocale("en");
+        expect(wrapper.render().children().length).to.equals(0);
+    })
+});

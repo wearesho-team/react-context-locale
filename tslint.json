@@ -21,6 +21,7 @@
     "jsx-no-string-ref": true,
     "jsx-self-close": true,
     "jsx-wrap-multiline": false,
+    "jsx-no-multiline-js": false,
     "no-magic-numbers": false,
     "no-reference": true,
     "curly": true,
@@ -40,7 +41,6 @@
       true,
       200
     ],
-    "no-default-export": true,
     "no-duplicate-imports": true,
     "prefer-const": true,
     "trailing-comma": [

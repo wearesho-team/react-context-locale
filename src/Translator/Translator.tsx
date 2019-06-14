@@ -1,41 +1,33 @@
 import * as React from "react";
 
-import { LocaleProviderContextTypes, LocaleProviderContext } from "../LocaleProvider/LocaleProviderContext";
-import { RegisterCategoryContextTypes, RegisterCategoryContext } from "../RegisterCategory";
-import { Params } from "../RegParser";
+import { LocaleProviderContext } from "../LocaleProvider";
+import { RegisterCategoryContext } from "../RegisterCategory";
+import { SubstituteParams } from "../helpers/substitude";
 
 export interface TranslatorProps {
-    render?: (translation: string) => React.ReactNode;
+    render?: (translation: string) => React.ReactElement;
     category?: string;
     children: string;
-    params?: Params;
+    params?: SubstituteParams;
 }
 
-export class Translator extends React.Component<TranslatorProps> {
-    public static readonly contextTypes = {
-        ...LocaleProviderContextTypes,
-        ...RegisterCategoryContextTypes
-    };
-
-    public readonly context: LocaleProviderContext & RegisterCategoryContext;
-
-    public render(): React.ReactNode {
-        if (this.props.render) {
-            return this.props.render(this.translation);
-        }
-
-        return this.translation;
-    }
-
-    protected get translation(): string {
-        return this.context.translate(
-            this.props.category || this.context.category,
-            this.props.children,
-            this.props.params
+export const Translator: React.FC<TranslatorProps> = (props: TranslatorProps) => {
+    if (!props.category) {
+        return (
+            <RegisterCategoryContext.Consumer>
+                {({category}) => <Translator {...props} category={category}>{props.children}</Translator>}
+            </RegisterCategoryContext.Consumer>
         );
     }
-}
 
-export function t(value: string, category?: string, params?: Params): React.ReactNode {
-    return <Translator category={category} params={params}>{value}</Translator>;
-}
+    const context = React.useContext(LocaleProviderContext);
+    const translation = React.useMemo(() => context.translate(
+        props.category,
+        props.children,
+        props.params
+    ), [context.translate, props.category, props.children, props.params]);
+
+    return props.render ? props.render(translation) : translation as any;
+};
+
+Translator.displayName = "Translator";

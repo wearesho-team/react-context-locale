@@ -1,10 +1,9 @@
 import { expect } from "chai";
+import { plural } from "../../../src/helpers";
 
-import { Plural } from "../../../src";
-
-describe("Plural()", () => {
+describe("plural()", () => {
     it("Should return string according to plural values", () => {
-        const pluralString = "_PLURAL(cat! )";
+        const text = "_PLR(cat! 0:0, 1:1, one:val one, few:val few, many:val many, other:val other)";
         [
             { index: 0, value: "0" },
             { index: 1, value: "1" },
@@ -17,13 +16,14 @@ describe("Plural()", () => {
             { index: 30, value: "val many" },
             { index: 31, value: "val one" },
         ].forEach(({ index, value }) => {
-            const plural = new Plural("0:0, 1:1, one:val one, few:val few, many:val many, other:val other", index);
-            expect(plural.convert()).to.equals(value);
+            expect(plural(text, {
+                cat: index,
+            })).to.equals(value);
         });
     });
 
     it("Should return empty string if passed plural values are invalid", () => {
-        const plural = new Plural("test: test, feww: wow", 1);
-        expect(plural.convert()).to.equals("");
+        const text = "_PLR(cat! test: test, feww: wow)";
+        expect(plural(text, { cat: 1 })).to.equals("");
     })
 });

@@ -2,8 +2,12 @@ import { expect } from "chai";
 import * as React from "react";
 import { ReactWrapper, mount } from "enzyme";
 
-import { MultipleLanguageSwitcher } from "../../../src";
-import { LocaleProviderContext } from "../../../src/LocaleProvider/LocaleProviderContext";
+import {
+    LocaleProviderContextDefaultValue,
+    LocaleProviderContextValue,
+    MultipleLanguageSwitcher,
+    LocaleProviderContext
+} from "../../../src";
 
 describe("<MultipleLanguageSwitcher/>", () => {
     let wrapper: ReactWrapper<{}, {}>;
@@ -14,11 +18,8 @@ describe("<MultipleLanguageSwitcher/>", () => {
     const commonHandler = () => undefined;
     const availableLocales = [ "ru", "en", "gb" ];
 
-    const context: LocaleProviderContext = {
-        addEventListener: commonHandler,
-        removeEventListener: commonHandler,
-        registerCategory: commonHandler,
-        translate: commonHandler as any,
+    const context: LocaleProviderContextValue = {
+        ...LocaleProviderContextDefaultValue,
         setLocale: (nextLocale: string) => {
             setLocaleTriggered = true;
             context.currentLocale = nextLocale;
@@ -31,8 +32,9 @@ describe("<MultipleLanguageSwitcher/>", () => {
     beforeEach(() => {
         commonHandler();
         wrapper = mount(
-            <MultipleLanguageSwitcher/>,
-            { context }
+            <LocaleProviderContext.Provider value={context}>
+                <MultipleLanguageSwitcher/>
+            </LocaleProviderContext.Provider>
         );
     });
 
@@ -59,8 +61,12 @@ describe("<MultipleLanguageSwitcher/>", () => {
         expect(wrapper.find("button").first().getDOMNode().className)
             .to.equals(MultipleLanguageSwitcher.defaultProps.activeClassName);
 
-        wrapper.find("button").last().simulate("click");
-        wrapper.setContext({ ...context });
+        const newContext = {
+            ...context,
+            currentLocale: "gb",
+        };
+        wrapper.setProps({ value: newContext });
+
         expect(wrapper.find("button").first().getDOMNode().className)
             .to.not.equals(MultipleLanguageSwitcher.defaultProps.activeClassName);
         expect(wrapper.find("button").last().getDOMNode().className)
@@ -69,9 +75,13 @@ describe("<MultipleLanguageSwitcher/>", () => {
 
     it("Should trigger prop 'onClick' on click", () => {
         let onClickTriggered = false;
-        wrapper.setProps({
-            onClick: () => onClickTriggered = true
-        });
+        const handleClick = () => onClickTriggered = true;
+        wrapper = mount(
+            <LocaleProviderContext.Provider value={context}>
+                <MultipleLanguageSwitcher onClick={handleClick}/>
+            </LocaleProviderContext.Provider>
+        );
+        wrapper.mount();
         wrapper.simulate("click");
 
         expect(onClickTriggered).to.be.true;
@@ -83,9 +93,11 @@ describe("<MultipleLanguageSwitcher/>", () => {
             en: "ENG",
             gb: "GER"
         };
-        wrapper.setProps({
-            localeLabels,
-        });
+        wrapper = mount(
+            <LocaleProviderContext.Provider value={context}>
+                <MultipleLanguageSwitcher localeLabels={localeLabels}/>
+            </LocaleProviderContext.Provider>
+        );
 
         Object.values(localeLabels).forEach(
             (label, i) => expect(
@@ -96,7 +108,11 @@ describe("<MultipleLanguageSwitcher/>", () => {
 
     it("Should return 'render' prop result on render if it passed", () => {
         const render = (locale) => `test.${locale}`;
-        wrapper.setProps({ render });
+        wrapper = mount(
+            <LocaleProviderContext.Provider value={context}>
+                <MultipleLanguageSwitcher render={render}/>
+            </LocaleProviderContext.Provider>
+        );
         wrapper.mount();
 
         availableLocales.forEach(
