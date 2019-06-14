@@ -84,4 +84,17 @@ export const LocaleProvider: React.FC<LocaleProviderProps> = (props) => {
     return <LocaleProviderContext.Provider value={context}>{props.children}</LocaleProviderContext.Provider>;
 };
 
+export interface LocaleProviderComponentProps {
+    localeProvider: LocaleProviderContextValue;
+}
+
+export function withLocaleProvider<P extends LocaleProviderComponentProps>(Component: React.ComponentType<P>)
+    : React.FC<Omit<P, keyof LocaleProviderComponentProps>> {
+    return (props: P) => (
+        <LocaleProviderContext.Consumer>
+            {(context) => <Component context={context} {...props} />}
+        </LocaleProviderContext.Consumer>
+    );
+}
+
 LocaleProvider.displayName = "LocaleProvider";
