@@ -1,6 +1,11 @@
 import * as React from "react";
 
-import { LocaleProviderContext, LocaleProviderContextValue, withLocaleProvider } from "../LocaleProvider";
+import {
+    LocaleProviderComponentProps,
+    LocaleProviderContext,
+    LocaleProviderContextValue,
+    withLocaleProvider
+} from "../LocaleProvider";
 import { TranslationsObject } from "../Storage";
 
 export interface RegisterCategoryProps {
@@ -20,8 +25,8 @@ export const RegisterCategoryContext = React.createContext<RegisterCategoryConte
     RegisterCategoryContextDefaultValue
 );
 
-export const RegisterCategory = withLocaleProvider(
-    class extends React.PureComponent<RegisterCategoryProps & { localeProvider: LocaleProviderContextValue }> {
+export const RegisterCategory = withLocaleProvider<RegisterCategoryProps & LocaleProviderComponentProps>(
+    class extends React.PureComponent<RegisterCategoryProps & LocaleProviderComponentProps> {
         constructor(props) {
             super(props);
             props.localeProvider.registerCategory(this.props.categoryName, this.props.translations);

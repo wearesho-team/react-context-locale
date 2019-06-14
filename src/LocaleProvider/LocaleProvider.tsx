@@ -92,7 +92,7 @@ export function withLocaleProvider<P extends LocaleProviderComponentProps>(Compo
     : React.FC<Omit<P, keyof LocaleProviderComponentProps>> {
     return (props: P) => (
         <LocaleProviderContext.Consumer>
-            {(context) => <Component context={context} {...props} />}
+            {(context) => <Component localeProvider={context} {...props} />}
         </LocaleProviderContext.Consumer>
     );
 }
