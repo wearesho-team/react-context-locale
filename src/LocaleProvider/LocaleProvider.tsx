@@ -64,7 +64,7 @@ export const LocaleProvider: React.FC<LocaleProviderProps> = (props) => {
 
     React.useEffect(() => {
         Object.keys(props.commonTranslations)
-            .filter((locale) => storage.hasRecord(currentLocale, props.commonTranslations[ locale ]))
+            .filter((locale) => !storage.hasRecord(currentLocale, props.commonTranslations[ locale ]))
             .forEach((locale) => storage.writeNewRecord(currentLocale, props.commonTranslations[ locale ]));
     }, [ props.commonTranslations ]);
     React.useEffect(() => {
