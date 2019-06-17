@@ -13,7 +13,7 @@ Tool for localize application.
 
 Using [npm](https://www.npmjs.com/):
 
-    $ npm install --save react-context-locale
+    $ npm install --save @sho-js/react-context-locale
 
 ## Usage
 
@@ -166,27 +166,6 @@ If you need to display some markup only for specified locale, use `OnLocale` com
 where
 - `locale` - locale on which showing markup
 
-#### EventInterceptor
-
-Use `EventInterceptor` component, when you need to catch events:
-
-```tsx
-<EventInterceptor event="change" onEvent={(params: { newLocale: string; oldLocale: string }) => console.log(params))}>
-    // ...
-</EventInterceptor>
-<EventInterceptor event="register" onEvent={(categoryName: string) => console.log(categoryName))}>
-    // ...
-</EventInterceptor>
-```
-
-where
-- `event` - event type.
-- `onEvent` - will called, when event triggered.
-
-available events:
-- `change` - event, that triggers when locale was changed.
-- `register` - event, that triggers when new category was registered.
-
 #### Plural
 
 It is only necessary to indicate the forms of the declined word in different situations:
@@ -249,8 +228,8 @@ Will render:
 
 #### Context API
 
-`LocaleProvider` component provide [next context](https://github.com/wearesho-team/react-context-locale/blob/master/src/LocaleProvider/LocaleProviderContext.ts).
-You can consume it for creating your own componetns.
+`LocaleProvider` component provide [React Context](./src/LocaleProvider/LocaleProvider.tsx).
+You can consume it for creating your own components.
 
 where
 - `registerCategory` - method for registering a new category.
@@ -259,8 +238,6 @@ where
 - `availableLocales` - array, that contains available locales.
 - `currentLocale` - string, that matches to current locale.
 - `baseLocale` - string, that matches to base locale.
-- `addEventListener` - method for adding locale event listeners.
-- `removeEventListener` - method for removing locale event listeners.
 
 #### Helpers
 
@@ -327,38 +304,4 @@ Will render if current locale is `ua`:
 
 ```tsx
 <a href="/ua/index">Home</a>
-```
-
-##### UrlChanger
-
-If you need to change url with changing locale, use `UrlChanger` component:
-
-```tsx
-<BrowserRouter>
-    <UrlChanger>
-        <SingleLanguageSwitcher localeLabels={{ru: "RUS", en: "ENG", gb: "GER"}} {...HTMLButtonProps}/>
-    </UrlChanger>
-</BrowserRouter>
-```
-
-*Note: This component use [react-router-dom](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-dom) context*
-
-##### LanguageSwitcherLink
-
-If you need to change locale with link instead button, use `LanguageSwitcherLink` component:
-
-```tsx
-<BrowserRouter>
-    <LanguageSwitcherLink language="ua">UA</LanguageSwitcherLink>
-    <LanguageSwitcherLink language="ru">RU</LanguageSwitcherLink>
-</BrowserRouter>
-```
-
-*Note: This component use [react-router-dom](https://github.com/ReactTraining/react-router/tree/master/packages/react-router-dom) context*
-
-Will render (if current path `/index`, `baseLocale` is `ru`):
-
-```tsx
-<a href="/ua/index">UA</a>
-<a href="/index">RU</a>
 ```
