@@ -39,8 +39,9 @@ export const LocaleProvider: React.FC<LocaleProviderProps> = (props) => {
     const storage = React.useMemo(() => props.storage || new Storage(), [ props.storage ]);
     const registerCategory: LocaleProviderContextValue["registerCategory"] = React.useCallback(
         (categoryName, translations) => {
-            Object.keys(translations)
-                .forEach((locale) => storage.appendOrWrite(categoryName, translations[ locale ]));
+            Object.keys(translations).forEach(
+                (locale) => storage.appendOrWrite(locale, { [ categoryName ]: translations[ locale ] })
+            )
         },
         []
     );
