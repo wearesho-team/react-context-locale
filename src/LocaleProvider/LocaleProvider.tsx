@@ -61,7 +61,9 @@ export const LocaleProvider: React.FC<LocaleProviderProps> = (props) => {
             return props.onSameTranslation({ value, category, currentLocale });
         }
         return params ? substitute(translation, params) : translation;
-    }, [ props.baseLocale, storage.readRecord, props.onMissingTranslation, props.onSameTranslation ]);
+    }, [
+        props.baseLocale, storage.readRecord, props.onMissingTranslation, props.onSameTranslation, currentLocale
+    ]);
 
     React.useEffect(() => {
         Object.keys(props.commonTranslations)
