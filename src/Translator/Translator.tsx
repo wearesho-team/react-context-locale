@@ -11,7 +11,7 @@ export interface TranslatorProps {
     params?: SubstituteParams;
 }
 
-export const Translator: React.FC<TranslatorProps> = (props: TranslatorProps) => {
+export const Translator: React.FC<TranslatorProps> = React.memo((props: TranslatorProps) => {
     if (!props.category) {
         return (
             <RegisterCategoryContext.Consumer>
@@ -21,14 +21,14 @@ export const Translator: React.FC<TranslatorProps> = (props: TranslatorProps) =>
     }
 
     const context = React.useContext(LocaleProviderContext);
-    const translation = React.useMemo(() => context.translate(
+    const translation = context.translate(
         props.category,
         props.children,
         props.params
-    ), [context.translate, props.category, props.children, props.params]);
+    );
 
     return props.render ? props.render(translation) : translation as any;
-};
+});
 
 Translator.displayName = "Translator";
 
